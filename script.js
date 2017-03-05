@@ -7,13 +7,13 @@ function addCover(url) {
 
 function addTitleFont(url) {
     var fontStyle = document.createElement("style");
-    fontStyle.innerHTML = '@font-face{font-family:"TitleFont";src:url("'+url+'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}'
+    fontStyle.innerHTML = '@font-face{font-family:"TitleFont";src:url("'+url+'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}';
     document.head.appendChild(fontStyle);
 }
 
 function addTextFont(url) {
     var fontStyle = document.createElement("style");
-    fontStyle.innerHTML = '@font-face{font-family:"TextFont";src:url("'+url+'");} p{font-family: "TextFont", serif;}'
+    fontStyle.innerHTML = '@font-face{font-family:"TextFont";src:url("'+url+'");} p{font-family: "TextFont", serif;}';
     document.head.appendChild(fontStyle);
 }
 
@@ -22,8 +22,6 @@ function getMetadata() {
     document.body.childNodes[0].childNodes.forEach(function(e) {
         var key, value;
         if(e.nodeType == 8) {
-            console.log(e);
-
             [key, ...value] = e.nodeValue.split(":");
             value = value.reduce(function(acc, str) {
                 return acc + ":" + str;
@@ -55,23 +53,6 @@ function applyMetadata(metadata) {
     });
 }
 
-//function delayImages() {
-//    for(var e of document.getElementsByTagName("img")) {
-//        e.dataset.src = e.src;
-//        e.src = "";
-//    }
-//}
-//
-//function loadDelayedImages() {
-//    for(var e of document.getElementsByTagName("img")) {
-//        e.src = e.dataset.src;
-//    }
-//}
-//
-////delayImages();
-
 window.onload = function() {
-    //var loadingTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.connectStart;
     applyMetadata(getMetadata());
-    //loadImages();
 }

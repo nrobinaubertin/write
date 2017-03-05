@@ -3,3 +3,5 @@ blog/
 vendor/
 composer.lock
 fonts/
+**/*.jpg
+**/*.md
