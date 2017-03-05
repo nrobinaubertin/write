@@ -1,0 +1,5 @@
+bin/
+blog/
+vendor/
+composer.lock
+fonts/

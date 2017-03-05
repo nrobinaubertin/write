@@ -1,0 +1,77 @@
+function addCover(url) {
+    var cover = document.createElement("div");
+    cover.classList.add("cover");
+    cover.style.backgroundImage = 'url('+url+')';
+    document.body.insertBefore(cover, document.body.firstChild);
+}
+
+function addTitleFont(url) {
+    var fontStyle = document.createElement("style");
+    fontStyle.innerHTML = '@font-face{font-family:"TitleFont";src:url("'+url+'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}'
+    document.head.appendChild(fontStyle);
+}
+
+function addTextFont(url) {
+    var fontStyle = document.createElement("style");
+    fontStyle.innerHTML = '@font-face{font-family:"TextFont";src:url("'+url+'");} p{font-family: "TextFont", serif;}'
+    document.head.appendChild(fontStyle);
+}
+
+function getMetadata() {
+    var metadata = [];
+    document.body.childNodes[0].childNodes.forEach(function(e) {
+        var key, value;
+        if(e.nodeType == 8) {
+            console.log(e);
+
+            [key, ...value] = e.nodeValue.split(":");
+            value = value.reduce(function(acc, str) {
+                return acc + ":" + str;
+            });
+            key = key.trim();
+            value = value.trim();
+            metadata.push({key: key, value: value});
+        }
+    });
+    return metadata;
+}
+
+function applyMetadata(metadata) {
+    metadata.forEach(function(e) {
+        switch (e.key) {
+            case "title":
+                document.title = e.value;
+                break;
+            case "cover-image":
+                addCover(e.value);
+                break;
+            case "title-font":
+                addTitleFont(e.value);
+                break;
+            case "text-font":
+                addTextFont(e.value);
+                break;
+        }
+    });
+}
+
+//function delayImages() {
+//    for(var e of document.getElementsByTagName("img")) {
+//        e.dataset.src = e.src;
+//        e.src = "";
+//    }
+//}
+//
+//function loadDelayedImages() {
+//    for(var e of document.getElementsByTagName("img")) {
+//        e.src = e.dataset.src;
+//    }
+//}
+//
+////delayImages();
+
+window.onload = function() {
+    //var loadingTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.connectStart;
+    applyMetadata(getMetadata());
+    //loadImages();
+}

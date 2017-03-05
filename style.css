@@ -1,0 +1,46 @@
+body {
+    margin: 0px;
+}
+
+article {
+    max-width: calc(100% - 5rem);
+    width: 45rem;
+    margin: 0 auto;
+    color: #333;
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+}
+
+h1 {
+    margin: 1rem 0;
+    font-size: 2.4rem;
+    line-height: 3rem;
+}
+
+h5, h6 {
+    margin: -0.5rem 0;
+    color: #999;
+}
+
+a, a:focus {
+    color: inherit;
+}
+
+img {
+    display: block;
+    max-width: 90%;
+    margin: 1rem auto;
+}
+
+blockquote {
+    border-left: 0.3rem solid #aaa;
+    padding-left: 2rem;
+    font-style: italic;
+}
+
+.cover {
+    height: 35rem;
+    background-size: cover;
+    background-position: 50% 50%;
+    margin-bottom: 3rem;
+}
