@@ -3,15 +3,15 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/post.php';
 
-if($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
+if ($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
     exit;
 }
 
-$root_path = preg_replace("/[^\/]+\.php$/","",$_SERVER["DOCUMENT_URI"]);
+$root_path = preg_replace("/\/?[^\/]+\.php$/","",$_SERVER["DOCUMENT_URI"]);
 $uri = $_SERVER['REQUEST_URI'];
+
 
 // Strip query string (?foo=bar) and decode URI
 if (false !== $pos = strpos($uri, '?')) {
@@ -27,6 +27,11 @@ if (substr($uri, 0, strlen($root_path)) == $root_path) {
 // remove the posts directory from the query
 if (substr($uri, 0, strlen("posts/")) == "posts/") {
     $uri = substr($uri, strlen("posts/"));
+}
+
+// do something when we query the root...
+if($uri == "" || $uri == "/") {
+    exit;
 }
 
 if(!file_exists($uri)) {
