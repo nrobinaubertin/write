@@ -9,10 +9,32 @@ use League\CommonMark\HtmlRenderer;
 use League\CommonMark\HtmlElement;
 use League\CommonMark\InlineParserContext;
 use League\CommonMark\Inline\Element\Link;
+use League\CommonMark\Inline\Element\Image;
 use League\CommonMark\Inline\Element\AbstractInline;
 use League\CommonMark\Inline\Parser\AbstractInlineParser;
 use League\CommonMark\Inline\Parser\InlineParserInterface;
 use League\CommonMark\Inline\Renderer\InlineRendererInterface;
+
+class DelayedLoadingImageRenderer implements InlineRendererInterface
+{
+	private $host;
+
+	public function __construct($host)
+	{
+		$this->host = $host;
+	}
+
+	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
+	{
+		$attrs = array();
+
+		if ($inline->getUrl() != "") {
+			$attrs['data-src'] = $inline->getUrl();
+		}
+
+        return new HtmlElement('img', $attrs, $htmlRenderer->renderInlines($inline->children()));
+	}
+}
 
 class ExternalLinkRenderer implements InlineRendererInterface
 {
@@ -113,6 +135,7 @@ function genHTML($path, $host) {
 	$environment->setConfig($config);
 	$environment->addInlineParser(new TwitterHandleParser());
 	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Link', new ExternalLinkRenderer($host));
+	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new DelayedLoadingImageRenderer($host));
 
 	$parser = new DocParser($environment);
 	$htmlRenderer = new HtmlRenderer($environment);
