@@ -4,6 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once __DIR__ . '/post.php';
+require_once __DIR__ . '/home.php';
 
 if ($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
     exit;
@@ -31,6 +32,7 @@ if (substr($uri, 0, strlen("posts/")) == "posts/") {
 
 // do something when we query the root...
 if($uri == "" || $uri == "/") {
+    echo genHomeHTML($root_path);
     exit;
 }
 
@@ -58,7 +60,7 @@ if(!file_exists($uri)) {
 
 switch(pathinfo($uri, PATHINFO_EXTENSION)) {
     case "md":
-        echo genHTML($uri, $_SERVER["HTTP_HOST"]);
+        echo genPostHTML($uri, $_SERVER["HTTP_HOST"]);
         break;
     default:
         readfile($uri);

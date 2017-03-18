@@ -101,7 +101,7 @@ class TwitterHandleParser extends AbstractInlineParser {
     }
 }
 
-function genHTML($path, $host) {
+function genPostHTML($path, $host) {
 
 	$html = "";
 
