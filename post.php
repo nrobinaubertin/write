@@ -39,7 +39,7 @@ function genPostHTML($dir, $root_path) {
     }
     
     if(isset($metadata['text-font'])) {
-        $html .= '<style>@font-face{font-family:"TextFont";src:url("' . $metadata['text-font'] . '");} p{font-family: "TextFont", serif;}</style>';
+        $html .= '<style>@font-face{font-family:"TextFont";src:url("' . $root_path."/".$metadata['text-font'] . '");} p{font-family: "TextFont", serif;}</style>';
     }
 
 	$html .= '<style>';
@@ -53,7 +53,15 @@ function genPostHTML($dir, $root_path) {
     $html .= '</head><body>';
     
     if(isset($metadata['cover-image'])) {
-        $html .= '<div class="cover" style="background-image:url(\'' . $metadata['cover-image'] . '\')"></div>';
+        $html .= '<div class="cover">';
+        $html .= '<picture>';
+        for($i = 0; $i < 10; $i++) {
+            $size = 200 + $i * 200;
+            $html .= '<source srcset="'.$metadata['cover-image'].'?w='.$size.'px" media="(max-width: '.$size.'px)">';
+        }
+        $html .= '<img src="'.$metadata['cover-image'].'">';
+        $html .= '</picture>';
+        $html .= '</div>';
     }
 
     $html .= '<article>';

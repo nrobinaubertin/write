@@ -4,8 +4,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once __DIR__ . '/post.php';
-require_once __DIR__ . '/home.php';
 require_once __DIR__ . '/router.php';
+require_once __DIR__ . '/gd.php';
 
 if ($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
     exit;
@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
 
 $root_path = getRootPath();
 $uri = getUri($root_path);
+
 
 if(file_exists($uri)) {
 
@@ -34,8 +35,18 @@ if(file_exists($uri)) {
         if(is_readable($uri)) {
 
             header('Content-Type: '.mime_content_type($uri));
-            set_time_limit(5);
-            readfile($uri);
+            switch(mime_content_type($uri)) {
+                case "image/jpeg":
+                    if(isset($_GET["w"])) {
+                        $width = min(2000, intval($_GET["w"]));
+                        resize_jpeg($uri, $width);
+                    } else {
+                        readfile($uri);
+                    }
+                    break;
+                default:
+                    readfile($uri);
+            }
             exit;
         } 
             

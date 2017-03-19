@@ -48,4 +48,19 @@ blockquote {
     background-position: 50% 50%;
     background-attachment: fixed;
     margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.cover img {
+    margin: 0;
+    padding: 0;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    max-width: none;
 }
