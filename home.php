@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/post.php';
+
 function createPostList($path) {
 
     $posts = [];
@@ -43,20 +45,6 @@ function createPostList($path) {
     });
 
     return $posts;
-}
-
-function getMetadata($mardown) {
-    $matches = [];
-    preg_match_all("/<!--([^>]*)-->/",$mardown,$matches);
-
-    $metadata = [];
-    foreach($matches[1] as $str) {
-        $a = explode(":",$str);
-        $key = trim($a[0]);
-        $value = trim($a[1]);
-        $metadata[$key] = $value;
-    }
-    return $metadata;
 }
 
 function genLinkToPostHTML($post, $root_path) {

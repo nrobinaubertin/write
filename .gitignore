@@ -1,7 +1,4 @@
-bin/
-blog/
 vendor/
 composer.lock
-fonts/
-**/*.jpg
-**/*.md
+posts/
+bin/
