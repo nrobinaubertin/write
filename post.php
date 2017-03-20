@@ -46,10 +46,6 @@ function genPostHTML($dir, $root_path) {
 	$html .= file_get_contents("style.css");
 	$html .= '</style>';
 
-	//$html .= '<script>';
-	//$html .= file_get_contents("script.js");
-	//$html .= '</script>';
-
     $html .= '</head><body>';
     
     if(isset($metadata['cover-image'])) {
@@ -57,7 +53,7 @@ function genPostHTML($dir, $root_path) {
         $html .= '<picture>';
         for($i = 0; $i < 10; $i++) {
             $size = 200 + $i * 200;
-            $html .= '<source srcset="'.$metadata['cover-image'].'?w='.$size.'px" media="(max-width: '.$size.'px)">';
+            $html .= '<source srcset="'.$metadata['cover-image'].'?w='.$size.'" media="(max-width: '.$size.'px)">';
         }
         $html .= '<img src="'.$metadata['cover-image'].'">';
         $html .= '</picture>';
@@ -66,7 +62,7 @@ function genPostHTML($dir, $root_path) {
 
     $html .= '<article>';
 
-    $html .= parseMarkDown($markdown);
+    $html .= parseMarkDown($markdown, $root_path);
 
     $html .= '</article>';
     $html .= '</body></html>';

@@ -1,8 +1,7 @@
 <?php
 
-function getUri($root_path) {
+function getUri($root_path, $uri) {
 
-    $uri = $_SERVER['REQUEST_URI'];
 
     // Strip query string (?foo=bar) and decode URI
     if (false !== $pos = strpos($uri, '?')) {
