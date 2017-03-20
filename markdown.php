@@ -15,13 +15,13 @@ use League\CommonMark\Inline\Parser\AbstractInlineParser;
 use League\CommonMark\Inline\Parser\InlineParserInterface;
 use League\CommonMark\Inline\Renderer\InlineRendererInterface;
 
-class DelayedLoadingImageRenderer implements InlineRendererInterface
+class PictureRenderer implements InlineRendererInterface
 {
-	private $host;
+	private $pathToGD;
 
-	public function __construct($host)
+	public function __construct($pathToGD)
 	{
-		$this->host = $host;
+		$this->pathToGD = $pathToGD;
 	}
 
 	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
@@ -29,12 +29,20 @@ class DelayedLoadingImageRenderer implements InlineRendererInterface
 		$attrs = array();
 
 		if ($inline->getUrl() != "") {
-			$attrs['data-src'] = $inline->getUrl();
+			$src = $inline->getUrl();
+            $innerHTML = "";
+            for($i = 0; $i < 10; $i++) {
+                $size = 100 + 100 * $i;
+                $screenWidth = $size * 1.25;
+                $innerHTML .= '<source srcset="'.$this->pathToGD.'?url='.urlencode($src).'&w='.$size.'" media="(max-width: '.$screenWidth.'px)">';
+            } 
+            $innerHTML .= '<img src="'.$src.'">';
 		}
 
-        return new HtmlElement('img', $attrs, $htmlRenderer->renderInlines($inline->children()));
+        return new HtmlElement('picture', $attrs, $innerHTML);
 	}
 }
+
 
 class ExternalLinkRenderer implements InlineRendererInterface
 {
@@ -72,7 +80,7 @@ class ExternalLinkRenderer implements InlineRendererInterface
 	}
 }
 
-function parseMarkDown($markdown) {
+function parseMarkDown($markdown, $root_path) {
 	$config = [
 		'renderer' => [
 			'block_separator' => "\n",
@@ -88,7 +96,7 @@ function parseMarkDown($markdown) {
 	$environment = Environment::createCommonMarkEnvironment();
 	$environment->setConfig($config);
 	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Link', new ExternalLinkRenderer($_SERVER["HTTP_HOST"]));
-	//$environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new DelayedLoadingImageRenderer($host));
+	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new PictureRenderer($root_path."/_gd"));
 
 	$parser = new DocParser($environment);
 	$htmlRenderer = new HtmlRenderer($environment);
