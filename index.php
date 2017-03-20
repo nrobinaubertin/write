@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/post.php';
-require_once __DIR__ . '/router.php';
-require_once __DIR__ . '/gd.php';
+require_once __DIR__ . '/bin/post.php';
+require_once __DIR__ . '/bin/router.php';
+require_once __DIR__ . '/bin/gd.php';
 
 if ($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
     header("HTTP/1.1 400 Bad Request");

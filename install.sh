@@ -19,7 +19,13 @@ then
     exit 1
 fi
 
-php composer-setup.php --quiet ${@:1}
+php composer-setup.php --quiet bin/
 RESULT=$?
 rm composer-setup.php
-exit $RESULT
+if [[ $RESULT != 0 ]]
+then
+    echo 'composer-setup failed'
+    exit 1
+fi
+
+php bin/composer install
