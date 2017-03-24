@@ -19,7 +19,7 @@ then
     exit 1
 fi
 
-php composer-setup.php --quiet bin/
+php composer-setup.php --quiet --install-dir=bin --filename=composer
 RESULT=$?
 rm composer-setup.php
 if [[ $RESULT != 0 ]]

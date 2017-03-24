@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/bin/post.php';
 require_once __DIR__ . '/bin/router.php';
 require_once __DIR__ . '/bin/gd.php';

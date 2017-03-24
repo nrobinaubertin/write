@@ -42,14 +42,15 @@ blockquote {
 }
 
 .cover {
-    height: 35rem;
-    max-height: calc(90vh - 2rem);
+    height: 50vh;
+    min-height: 12rem;
     background-size: cover;
     background-position: 50% 50%;
     background-attachment: fixed;
     margin-bottom: 1rem;
     position: relative;
     overflow: hidden;
+    transition: height .5s;
 }
 
 .cover img {
