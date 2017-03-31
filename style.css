@@ -1,5 +1,10 @@
 body {
     margin: 0px;
+}
+
+main {
+    position: relative;
+    top: 45rem;
     background-color: #fafafa;
 }
 
@@ -42,8 +47,8 @@ blockquote {
 }
 
 .cover {
-    height: 50vh;
-    min-height: 12rem;
+    max-height: 100vh;
+    height: 45rem;
     background-size: cover;
     background-position: 50% 50%;
     background-attachment: fixed;
@@ -51,6 +56,9 @@ blockquote {
     position: relative;
     overflow: hidden;
     transition: height .5s;
+    position: fixed;
+    width: 100vw;
+    z-index: -100;
 }
 
 .cover img {

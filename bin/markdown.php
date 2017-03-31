@@ -20,10 +20,12 @@ class PictureRenderer implements InlineRendererInterface
 	private $pathToGD;
     private $host;
     private $dir;
+    private $root_path;
 
 	public function __construct($root_path, $host, $dir)
 	{
 		$this->pathToGD = $root_path."/_gd";
+        $this->root_path = $root_path;
         $this->host = $host;
         $this->dir = $dir;
 	}
@@ -34,16 +36,18 @@ class PictureRenderer implements InlineRendererInterface
 
 		if ($inline->getUrl() != "") {
 			$src = $inline->getUrl();
+            $original = $src;
             if(!$this->isExternalUrl($src)) {
                 $src = $this->dir.$src;
+                $original = $this->root_path."/".$src;
             }
             $innerHTML = "";
-            for($i = 0; $i < 10; $i++) {
-                $size = 100 + 100 * $i;
-                $screenWidth = $size * 1.25;
+            for($i = 0; $i < 20; $i++) {
+                $screenWidth = 100 + 100 * $i;
+                $size = min(800, $screenWidth);
                 $innerHTML .= '<source srcset="'.$this->pathToGD.'?url='.urlencode($src).'&w='.$size.'" media="(max-width: '.$screenWidth.'px)">';
             } 
-            $innerHTML .= '<img src="'.$src.'">';
+            $innerHTML .= '<img src="'.$original.'">';
 		}
 
         return new HtmlElement('picture', $attrs, $innerHTML);

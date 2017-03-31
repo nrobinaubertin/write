@@ -59,23 +59,24 @@ function genPostHTML($dir, $root_path) {
     
     if(isset($metadata['cover-image'])) {
         $img_url = $dir.$metadata['cover-image'];
+        $img_path = $root_path."/".$dir.$metadata['cover-image'];
         $html .= '<div class="cover">';
         $html .= '<picture>';
-        for($i = 0; $i < 10; $i++) {
-            $size = 200 + $i * 200;
-            $screenWidth = $size - 200;
+        for($i = 0; $i < 20; $i++) {
+            $screenWidth = 200 + 100 * $i;
+            $size = $screenWidth - 100;
             $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$size.'" media="(max-width: '.$size.'px)">';
         }
-        $html .= '<img src="'.$img_url.'">';
+        $html .= '<img src="'.$img_path.'">';
         $html .= '</picture>';
         $html .= '</div>';
     }
 
-    $html .= '<article>';
+    $html .= '<main><article>';
 
     $html .= parseMarkDown($markdown, $root_path, $dir);
 
-    $html .= '</article>';
+    $html .= '</article></main>';
     $html .= '</body></html>';
 	return $html;
 }
