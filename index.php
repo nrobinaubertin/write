@@ -18,8 +18,9 @@ $uri = getUri($root_path, $_SERVER['REQUEST_URI']);
 
 // check if this is a job for gd
 if (substr($_SERVER["REQUEST_URI"], 0, strlen($root_path."/_gd")) == $root_path."/_gd") {
-    if(preg_match("/^image/",mime_content_type($uri))) {
-        resize_image(urldecode($_GET["url"]), intval($_GET["w"]));
+    $imgInfos = getimagesize($_GET["url"]);
+    if(preg_match("/^image/", $imgInfos["mime"])) {
+        resize_image(urldecode($_GET["url"]), intval($_GET["w"]), $imgInfos);
     } else {
         header("HTTP/1.1 400 Bad Request");
         echo "400 Bad Request";
@@ -45,8 +46,9 @@ if(file_exists($uri)) {
     } else {
 
         if(is_readable($uri)) {
-            if(preg_match("/^image/",mime_content_type($uri))) {
-                resize_image($uri, intval($_GET["w"]));
+            $imgInfos = getimagesize($_GET["url"]);
+            if(preg_match("/^image/", $imgInfos["mime"])) {
+                resize_image($uri, intval($_GET["w"]), $imgInfos);
             } else {
                 readfile($uri);
             }

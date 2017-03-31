@@ -18,10 +18,14 @@ use League\CommonMark\Inline\Renderer\InlineRendererInterface;
 class PictureRenderer implements InlineRendererInterface
 {
 	private $pathToGD;
+    private $host;
+    private $dir;
 
-	public function __construct($pathToGD)
+	public function __construct($root_path, $host, $dir)
 	{
-		$this->pathToGD = $pathToGD;
+		$this->pathToGD = $root_path."/_gd";
+        $this->host = $host;
+        $this->dir = $dir;
 	}
 
 	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
@@ -30,6 +34,9 @@ class PictureRenderer implements InlineRendererInterface
 
 		if ($inline->getUrl() != "") {
 			$src = $inline->getUrl();
+            if(!$this->isExternalUrl($src)) {
+                $src = $this->dir.$src;
+            }
             $innerHTML = "";
             for($i = 0; $i < 10; $i++) {
                 $size = 100 + 100 * $i;
@@ -40,6 +47,11 @@ class PictureRenderer implements InlineRendererInterface
 		}
 
         return new HtmlElement('picture', $attrs, $innerHTML);
+	}
+
+	private function isExternalUrl($url)
+    {
+		return parse_url($url, PHP_URL_HOST) != NULL && parse_url($url, PHP_URL_HOST) !== $this->host;
 	}
 }
 
@@ -80,7 +92,7 @@ class ExternalLinkRenderer implements InlineRendererInterface
 	}
 }
 
-function parseMarkDown($markdown, $root_path) {
+function parseMarkDown($markdown, $root_path, $dir) {
 	$config = [
 		'renderer' => [
 			'block_separator' => "\n",
@@ -96,7 +108,7 @@ function parseMarkDown($markdown, $root_path) {
 	$environment = Environment::createCommonMarkEnvironment();
 	$environment->setConfig($config);
 	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Link', new ExternalLinkRenderer($_SERVER["HTTP_HOST"]));
-	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new PictureRenderer($root_path."/_gd"));
+	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new PictureRenderer($root_path, $_SERVER["HTTP_HOST"], $dir));
 
 	$parser = new DocParser($environment);
 	$htmlRenderer = new HtmlRenderer($environment);

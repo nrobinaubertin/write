@@ -3,13 +3,17 @@
 require_once __DIR__ . '/router.php';
 
 // resize image file
-function resize_image($src, $width) {
+function resize_image($src, $width, $imgInfos) {
     if($src == "" || intval($width) == 0) {
         exit;
     }
 
     $width = min(2000, intval($width));
-    list($imgWidth, $imgHeight, $type) = getimagesize($src);
+    if(isset($imgInfos)) {
+        list($imgWidth, $imgHeight, $type) = $imgInfos;
+    } else {
+        list($imgWidth, $imgHeight, $type) = getimagesize($src);
+    }
     $mimeType = image_type_to_mime_type($type);
 
     switch($mimeType) {

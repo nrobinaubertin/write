@@ -32,7 +32,7 @@ function genPostHTML($dir, $root_path) {
 
 	$html .= '<!DOCTYPE html><html><head>';
 	$html .= '<meta charset="utf8">';
-    $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">';
+    $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">';
 
     if(isset($metadata["title"])) {
         $html .= '<title>' . $metadata['title'] . '</title>';
@@ -44,11 +44,11 @@ function genPostHTML($dir, $root_path) {
     }
 
     if(isset($metadata['title-font'])) {
-        $html .= '<style>@font-face{font-family:"TitleFont";src:url("' . $root_path."/".$metadata['title-font'] . '");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
+        $html .= '<style>@font-face{font-family:"TitleFont";src:url("' . $root_path."/".$dir.$metadata['title-font'] . '");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
     
     if(isset($metadata['text-font'])) {
-        $html .= '<style>@font-face{font-family:"TextFont";src:url("' . $root_path."/".$metadata['text-font'] . '");} p{font-family: "TextFont", serif;}</style>';
+        $html .= '<style>@font-face{font-family:"TextFont";src:url("' . $root_path."/".$dir.$metadata['text-font'] . '");} p{font-family: "TextFont", serif;}</style>';
     }
 
 	$html .= '<style>';
@@ -58,21 +58,22 @@ function genPostHTML($dir, $root_path) {
     $html .= '</head><body>';
     
     if(isset($metadata['cover-image'])) {
+        $img_url = $dir.$metadata['cover-image'];
         $html .= '<div class="cover">';
         $html .= '<picture>';
         for($i = 0; $i < 10; $i++) {
             $size = 200 + $i * 200;
             $screenWidth = $size - 200;
-            $html .= '<source srcset="'.$metadata['cover-image'].'?w='.$size.'" media="(max-width: '.$size.'px)">';
+            $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$size.'" media="(max-width: '.$size.'px)">';
         }
-        $html .= '<img src="'.$metadata['cover-image'].'">';
+        $html .= '<img src="'.$img_url.'">';
         $html .= '</picture>';
         $html .= '</div>';
     }
 
     $html .= '<article>';
 
-    $html .= parseMarkDown($markdown, $root_path);
+    $html .= parseMarkDown($markdown, $root_path, $dir);
 
     $html .= '</article>';
     $html .= '</body></html>';
