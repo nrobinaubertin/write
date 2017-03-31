@@ -4,19 +4,20 @@ body {
 
 main {
     position: relative;
-    top: 45rem;
+    top: 50vh;
     background-color: #fafafa;
+    padding-top: 1rem;
 }
 
 article {
     overflow-x: hidden;
-    max-width: calc(100% - 2rem);
+    max-width: calc(100% - 3rem);
     width: 45rem;
     margin: 0 auto;
     font-size: 1.15rem;
     line-height: 1.8rem;
     color: #444;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
 }
 
 h1 {
@@ -47,15 +48,8 @@ blockquote {
 }
 
 .cover {
-    max-height: 100vh;
-    height: 45rem;
-    background-size: cover;
-    background-position: 50% 50%;
-    background-attachment: fixed;
-    margin-bottom: 1rem;
-    position: relative;
+    height: 50vh;
     overflow: hidden;
-    transition: height .5s;
     position: fixed;
     width: 100vw;
     z-index: -100;
@@ -63,8 +57,6 @@ blockquote {
 
 .cover img {
     margin: 0;
-    padding: 0;
-    display: block;
     position: absolute;
     top: 50%;
     left: 50%;
