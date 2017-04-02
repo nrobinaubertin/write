@@ -2,13 +2,51 @@
 
 require_once __DIR__ . '/router.php';
 
+// calculate new size given a max newWidth and a max newHeight
+function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
+    if($oldWidth == 0 || $oldHeight == 0) {
+        return false;
+    }
+
+    if($maxHeight == 0 && $maxWidth == 0) {
+        return false;
+    }
+
+    // starting point for the width and height
+    $width = $oldWidth;
+    $height = $oldHeight;
+
+
+    if($maxWidth != 0) {
+        if($maxWidth < $oldWidth) {
+            $width = $maxWidth;
+            $height = $oldHeight * $maxWidth / $oldWidth;
+        } 
+    }
+
+    if($maxHeight != 0) {
+        if($maxHeight < $height) {
+            $width = $width * $maxHeight / $height;
+            $height = $maxHeight;
+        }
+    }
+
+    return [$width, $height];
+}
+
 // resize image file
-function resize_image($src, $width, $imgInfos) {
-    if($src == "" || intval($width) == 0) {
+// $size_array == [$maxWidth, $maxHeight]
+function resize_image($src, $size_array, $imgInfos) {
+
+    if($src == "" || count($size_array) < 2) {
         exit;
     }
 
+    list($width, $height) = $size_array;
+
     $width = min(2000, intval($width));
+    $height = min(2000, intval($height));
+
     if(isset($imgInfos)) {
         list($imgWidth, $imgHeight, $type) = $imgInfos;
     } else {
@@ -37,12 +75,8 @@ function resize_image($src, $width, $imgInfos) {
         exit;
     }
 
-    if($width < $imgWidth) {
-        $height = $imgHeight * $width / $imgWidth;
-    } else {
-        $width = $imgWidth;
-        $height = $imgHeight;
-    }
+    list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
+
     $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
 

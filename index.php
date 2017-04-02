@@ -20,7 +20,17 @@ $uri = getUri($root_path, $_SERVER['REQUEST_URI']);
 if (substr($_SERVER["REQUEST_URI"], 0, strlen($root_path."/_gd")) == $root_path."/_gd") {
     $imgInfos = getimagesize($_GET["url"]);
     if(preg_match("/^image/", $imgInfos["mime"])) {
-        resize_image(urldecode($_GET["url"]), intval($_GET["w"]), $imgInfos);
+        if(isset($_GET["w"])) {
+            $w = intval($_GET["w"]);
+        } else {
+            $w = 0;
+        }
+        if(isset($_GET["h"])) {
+            $h = intval($_GET["h"]);
+        } else {
+            $h = 0;
+        }
+        resize_image(urldecode($_GET["url"]), [$w, $h], $imgInfos);
     } else {
         header("HTTP/1.1 400 Bad Request");
         echo "400 Bad Request";
@@ -48,7 +58,17 @@ if(file_exists($uri)) {
         if(is_readable($uri)) {
             $imgInfos = getimagesize($_GET["url"]);
             if(preg_match("/^image/", $imgInfos["mime"])) {
-                resize_image($uri, intval($_GET["w"]), $imgInfos);
+                if(isset($_GET["w"])) {
+                    $w = intval($_GET["w"]);
+                } else {
+                    $w = 0;
+                }
+                if(isset($_GET["h"])) {
+                    $h = intval($_GET["h"]);
+                } else {
+                    $h = 0;
+                }
+                resize_image($uri, [$w, $h], $imgInfos);
             } else {
                 readfile($uri);
             }

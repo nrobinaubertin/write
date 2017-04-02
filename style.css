@@ -4,7 +4,7 @@ body {
 
 main {
     position: relative;
-    top: 50vh;
+    top: 75vh;
     background-color: #fafafa;
     padding-top: 1rem;
 }
@@ -48,7 +48,7 @@ blockquote {
 }
 
 .cover {
-    height: 50vh;
+    height: 75vh;
     overflow: hidden;
     position: fixed;
     width: 100vw;

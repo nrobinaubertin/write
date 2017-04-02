@@ -102,9 +102,9 @@ function genPostHTML($dir, $root_path) {
         $html .= '<div class="cover">';
         $html .= '<picture>';
         for($i = 0; $i < 20; $i++) {
-            $screenWidth = 200 + 100 * $i;
-            $size = $screenWidth - 100;
-            $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$size.'" media="(max-width: '.$size.'px)">';
+            $screenWidth = 100 + 100 * $i;
+            $size = $screenWidth;
+            $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$size.'" media="(max-width: '.$size.'px) and (max-height: '.floor($size * 0.75).'px)">';
         }
         $html .= '<img src="'.$img_path.'">';
         $html .= '</picture>';
