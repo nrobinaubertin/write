@@ -38,7 +38,7 @@ function locateFont($font, $dir, $root_path) {
     if (in_array(pathinfo($font, PATHINFO_EXTENSION), $formats)) {
         $location = searchFile($font, $dir, $root_path);
         if (file_exists($location)) {
-            return 'url("'.$root_path.'/'.$location.'")';
+            return 'url("'.$root_path.$location.'")';
         } else {
             return "";
         }
@@ -48,7 +48,7 @@ function locateFont($font, $dir, $root_path) {
     foreach($formats as $ext) {
         $location = searchFile($font.'.'.$ext, $dir, $root_path);
         if (file_exists($location)) {
-            return 'url("'.$root_path.'/'.$location.'")';
+            return 'url("'.$root_path.$location.'")';
         }
     }
 
@@ -87,7 +87,7 @@ function genPostHTML($dir, $root_path) {
     }
     
     if(isset($metadata['text-font'])) {
-        $html .= '<style>@font-face{font-family:"TextFont";src:'.locateFont($metadata['text-font'], $dir, $root_path).';} p{font-family: "TextFont", serif;}</style>';
+        $html .= '<style>@font-face{font-family:"TextFont";src:'.locateFont($metadata['text-font'], $dir, $root_path).';} body{font-family: "TextFont", serif;}</style>';
     }
 
 	$html .= '<style>';
@@ -98,13 +98,13 @@ function genPostHTML($dir, $root_path) {
     
     if(isset($metadata['cover-image'])) {
         $img_url = $dir.$metadata['cover-image'];
-        $img_path = $root_path."/".$dir.$metadata['cover-image'];
+        $img_path = $root_path.$dir.$metadata['cover-image'];
         $html .= '<div class="cover">';
         $html .= '<picture>';
         for($i = 0; $i < 20; $i++) {
             $screenWidth = 100 + 100 * $i;
             $size = $screenWidth;
-            $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$size.'" media="(max-width: '.$size.'px) and (max-height: '.floor($size * 0.75).'px)">';
+            $html .= '<source srcset="'.$root_path.'_gd?url='.urlencode($img_url).'&w='.$size.'" media="(max-width: '.$size.'px) and (max-height: '.floor($size * 0.75).'px)">';
         }
         $html .= '<img src="'.$img_path.'">';
         $html .= '</picture>';

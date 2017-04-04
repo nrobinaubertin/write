@@ -17,7 +17,7 @@ $root_path = getRootPath();
 $uri = getUri($root_path, $_SERVER['REQUEST_URI']);
 
 // check if this is a job for gd
-if (substr($_SERVER["REQUEST_URI"], 0, strlen($root_path."/_gd")) == $root_path."/_gd") {
+if ($uri == "_gd") {
     $imgInfos = getimagesize($_GET["url"]);
     if(preg_match("/^image/", $imgInfos["mime"])) {
         if(isset($_GET["w"])) {
@@ -36,6 +36,11 @@ if (substr($_SERVER["REQUEST_URI"], 0, strlen($root_path."/_gd")) == $root_path.
         echo "400 Bad Request";
     }
     exit;
+}
+
+// make sure that we point to the post directory
+if (substr($uri, 0, strlen("posts/")) != "posts/") {
+    $uri = "posts/" . $uri;
 }
 
 if(file_exists($uri)) {
