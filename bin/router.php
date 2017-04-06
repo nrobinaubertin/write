@@ -1,7 +1,6 @@
 <?php
 
 function getUri($root_path, $uri) {
-    
     // remove "/" duplicates
     $uri = preg_replace("/\/+/","/",$uri);
 
@@ -22,8 +21,6 @@ function getUri($root_path, $uri) {
 }
 
 function getRootPath() {
-    
     // the root_path is the directory of index.php
     return dirname($_SERVER["DOCUMENT_URI"])."/";
-
 }

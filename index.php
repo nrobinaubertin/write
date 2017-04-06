@@ -7,12 +7,6 @@ require_once __DIR__ . '/bin/post.php';
 require_once __DIR__ . '/bin/router.php';
 require_once __DIR__ . '/bin/gd.php';
 
-if ($_SERVER['REQUEST_METHOD'] != "GET" || $_SERVER["DOCUMENT_URI"] == "") {
-    header("HTTP/1.1 400 Bad Request");
-    echo "400 Bad Request";
-    exit;
-}
-
 $root_path = getRootPath();
 $uri = getUri($root_path, $_SERVER['REQUEST_URI']);
 
@@ -20,16 +14,8 @@ $uri = getUri($root_path, $_SERVER['REQUEST_URI']);
 if ($uri == "_gd") {
     $imgInfos = getimagesize($_GET["url"]);
     if(preg_match("/^image/", $imgInfos["mime"])) {
-        if(isset($_GET["w"])) {
-            $w = intval($_GET["w"]);
-        } else {
-            $w = 0;
-        }
-        if(isset($_GET["h"])) {
-            $h = intval($_GET["h"]);
-        } else {
-            $h = 0;
-        }
+        $w = isset($_GET["w"]) ? intval($_GET["w"]) : 0;
+        $h = isset($_GET["h"]) ? intval($_GET["h"]) : 0;
         resize_image(urldecode($_GET["url"]), [$w, $h], $imgInfos);
     } else {
         header("HTTP/1.1 400 Bad Request");
@@ -61,22 +47,8 @@ if(file_exists($uri)) {
     } else {
 
         if(is_readable($uri)) {
-            $imgInfos = getimagesize($_GET["url"]);
-            if(preg_match("/^image/", $imgInfos["mime"])) {
-                if(isset($_GET["w"])) {
-                    $w = intval($_GET["w"]);
-                } else {
-                    $w = 0;
-                }
-                if(isset($_GET["h"])) {
-                    $h = intval($_GET["h"]);
-                } else {
-                    $h = 0;
-                }
-                resize_image($uri, [$w, $h], $imgInfos);
-            } else {
-                readfile($uri);
-            }
+            header('Content-Type: '.mime_content_type($uri));
+            readfile($uri);
             exit;
         } 
 

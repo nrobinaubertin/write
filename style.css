@@ -3,7 +3,6 @@ body {
 }
 
 .cover {
-    height: 75vh;
     overflow: hidden;
     position: fixed;
     width: 100vw;
@@ -67,13 +66,14 @@ blockquote {
 }
 
 pre {
-    background: #eee;
+    background: #444;
 }
 
 pre code {
     display: block;
     overflow-x: scroll;
-    padding: 1rem;
+    padding: 0.5rem;
+    color: #eee;
 }
 
 code {

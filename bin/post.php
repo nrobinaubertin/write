@@ -130,5 +130,3 @@ function genPostHTML($dir, $root_path) {
     $html .= '</body></html>';
 	return $html;
 }
-
-?>
