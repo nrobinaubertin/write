@@ -23,7 +23,7 @@ body {
 
 main {
     position: relative;
-    background-color: #fafafa;
+    background-color: #fcfcfc;
     padding-top: 1rem;
 }
 
@@ -49,8 +49,9 @@ small {
 }
 
 a, a:focus {
-    text-decoration: none;
-    color: #07a;
+    text-decoration: underline;
+    color: inherit;
+    /*color: #07a;*/
 }
 
 img {
@@ -63,4 +64,19 @@ blockquote {
     border-left: 0.3rem solid #aaa;
     padding-left: 2rem;
     font-style: italic;
+}
+
+pre {
+    background: #eee;
+}
+
+pre code {
+    display: block;
+    overflow-x: scroll;
+    padding: 1rem;
+}
+
+code {
+    font-family: monospace;
+    font-size: 1rem;
 }

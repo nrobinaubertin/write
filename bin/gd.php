@@ -31,7 +31,7 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
         }
     }
 
-    return [$width, $height];
+    return [floor($width), floor($height)];
 }
 
 // resize image file

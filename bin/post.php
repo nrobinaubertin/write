@@ -97,7 +97,7 @@ function genPostHTML($dir, $root_path) {
     if(isset($metadata['cover-image'])) {
         $html .= '<style>';
         for($i = 0; $i < 10; $i++) {
-            $screenWidth = 200 + 300 * $i;
+            $screenWidth = 250 + 250 * $i;
             $size = floor($screenWidth * 0.75);
             $html .= '@media (min-height: '.$screenWidth.'px) { .cover{height: '.$size.'px} .cover + main{top: '.$size.'px} }';
         }
@@ -112,7 +112,7 @@ function genPostHTML($dir, $root_path) {
         $html .= '<div class="cover">';
         $html .= '<picture>';
         for($i = 0; $i < 10; $i++) {
-            $screenWidth = 100 + 500 * $i;
+            $screenWidth = 250 + 250 * $i;
             $width = $screenWidth;
             $height = floor($screenWidth * 0.75);
             $html .= '<source srcset="'.$root_path.'_gd?url='.urlencode($img_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
