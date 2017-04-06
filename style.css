@@ -21,10 +21,6 @@ body {
     max-width: none;
 }
 
-.cover + main {
-    top: 75vh;
-}
-
 main {
     position: relative;
     background-color: #fafafa;
@@ -36,13 +32,14 @@ article {
     max-width: calc(100% - 3rem);
     width: 45rem;
     margin: 0 auto;
+    font-size: 1.2rem;
     line-height: 1.8rem;
     color: #444;
     padding: 0 1.5rem;
 }
 
 h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     line-height: 3rem;
 }
 
