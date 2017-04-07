@@ -8,14 +8,9 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
         return false;
     }
 
-    if($maxHeight == 0 && $maxWidth == 0) {
-        return false;
-    }
-
     // starting point for the width and height
     $width = $oldWidth;
     $height = $oldHeight;
-
 
     if($maxWidth != 0) {
         if($maxWidth < $oldWidth) {
@@ -38,8 +33,8 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
 // $size_array == [$maxWidth, $maxHeight]
 function resize_image($src, $size_array, $imgInfos) {
 
-    if($src == "" || count($size_array) < 2) {
-        exit;
+    if($src == "" || count($size_array) < 2) { 
+        return false;
     }
 
     list($width, $height) = $size_array;
@@ -60,55 +55,57 @@ function resize_image($src, $size_array, $imgInfos) {
 
     if (file_exists($filename)) {
         header('Content-Type: '.$mimeType);
+        header('from: cache');
         readfile($filename);
     } else {
+        
+        header('Content-Type: '.$mimeType);
 
         switch($mimeType) {
-        case "image/jpeg":
-            $imgSource = imagecreatefromjpeg($src);
-            break;
-        case "image/png":
-            $imgSource = imagecreatefrompng($src);
-            break;
-        case "image/bmp":
-            $imgSource = imagecreatefrombmp($src);
-            break;
-        case "image/webp":
-            $imgSource = imagecreatefromwebp($src);
-            break;
-        case "image/gif":
-            $imgSource = imagecreatefromgif($src);
-            break;
-        default:
-            readfile($src);
-            exit;
+            case "image/jpeg":
+                $imgSource = imagecreatefromjpeg($src);
+                break;
+            case "image/png":
+                $imgSource = imagecreatefrompng($src);
+                break;
+            case "image/bmp":
+                $imgSource = imagecreatefrombmp($src);
+                break;
+            case "image/webp":
+                $imgSource = imagecreatefromwebp($src);
+                break;
+            case "image/gif":
+                $imgSource = imagecreatefromgif($src);
+                break;
+            default:
+                readfile($src);
+                exit;
         }
 
         $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
         imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
 
-        header('Content-Type: '.$mimeType);
         switch($mimeType) {
-        case "image/jpeg":
-            imagejpeg($im);
-            imagejpeg($im, $filename);
-            break;
-        case "image/png":
-            imagepng($im);
-            imagepng($im, $filename);
-            break;
-        case "image/bmp":
-            imagebmp($im);
-            imagejpeg($im, $filename);
-            break;
-        case "image/webp":
-            imagewebp($im);
-            imagejpeg($im, $filename);
-            break;
-        case "image/gif":
-            imagegif($im);
-            imagejpeg($im, $filename);
-            break;
+            case "image/jpeg":
+                imagejpeg($im);
+                imagejpeg($im, $filename);
+                break;
+            case "image/png":
+                imagepng($im);
+                imagepng($im, $filename);
+                break;
+            case "image/bmp":
+                imagebmp($im);
+                imagejpeg($im, $filename);
+                break;
+            case "image/webp":
+                imagewebp($im);
+                imagejpeg($im, $filename);
+                break;
+            case "image/gif":
+                imagegif($im);
+                imagejpeg($im, $filename);
+                break;
         }
 
         imagedestroy($im);
