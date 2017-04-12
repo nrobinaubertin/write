@@ -31,7 +31,7 @@ article {
     max-width: calc(100% - 3rem);
     width: 45rem;
     margin: 0 auto;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1.8rem;
     color: #444;
     padding: 0 1.5rem;
@@ -65,8 +65,12 @@ blockquote {
     font-style: italic;
 }
 
-pre {
-    background: #444;
+code {
+    font-family: monospace;
+    font-size: 1rem;
+    background-color: #eee;
+    padding: 0.1rem 0.2rem;
+    border-radius: 4px;
 }
 
 pre code {
@@ -74,9 +78,5 @@ pre code {
     overflow-x: scroll;
     padding: 0.5rem;
     color: #eee;
-}
-
-code {
-    font-family: monospace;
-    font-size: 1rem;
+    background-color: #444;
 }
