@@ -79,7 +79,7 @@ code {
 
 pre code {
     display: block;
-    overflow-x: scroll;
+    overflow-x: auto;
     padding: 0.5rem;
     color: #eee;
     background-color: #444;

@@ -37,10 +37,6 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
         return false;
     }
 
-    if($maxHeight == 0 && $maxWidth == 0) {
-        return false;
-    }
-
     // starting point for the width and height
     $width = $oldWidth;
     $height = $oldHeight;
@@ -65,6 +61,10 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
 // resize image file
 // $size_array == [$maxWidth, $maxHeight]
 function resize_image($src, $size_array) {
+
+    if($src == "" || count($size_array) < 2) { 
+        return false;
+    }
 
     list($width, $height) = $size_array;
 
