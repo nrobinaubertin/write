@@ -109,7 +109,8 @@ function genPostHTML($dir, $root_path) {
     if(isset($metadata['cover-image'])) {
         $img_url = $dir.$metadata['cover-image'];
         $img_path = $root_path.$dir.$metadata['cover-image'];
-        $html .= '<div class="cover">';
+
+        $html .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($img_url).'\')">';
         $html .= '<picture>';
         for($i = 0; $i < 10; $i++) {
             $screenWidth = 250 + 250 * $i;
@@ -117,7 +118,7 @@ function genPostHTML($dir, $root_path) {
             $height = floor($screenWidth * 0.75);
             $html .= '<source srcset="'.$root_path.'_gd?url='.urlencode($img_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
         }
-        $html .= '<img src="'.$img_path.'">';
+        $html .= '<img onload="this.style.opacity=1" src="'.$img_path.'">';
         $html .= '</picture>';
         $html .= '</div>';
     }

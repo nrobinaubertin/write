@@ -6,7 +6,9 @@ body {
     overflow: hidden;
     position: fixed;
     width: 100vw;
-    z-index: -100;
+    z-index: -1;
+    background-size: cover;
+    background-position: center;
 }
 
 .cover img {
@@ -18,6 +20,8 @@ body {
     min-height: 100%;
     transform: translate(-50%, -50%);
     max-width: none;
+    opacity: 0;
+    transition: 2s;
 }
 
 main {
@@ -34,7 +38,7 @@ article {
     font-size: 1.1rem;
     line-height: 1.8rem;
     color: #444;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem 1rem 1.5rem;
 }
 
 h1 {
