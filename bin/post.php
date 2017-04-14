@@ -107,8 +107,8 @@ function genPostHTML($dir, $root_path) {
     $html .= '</head><body>';
     
     if(isset($metadata['cover-image'])) {
-        $img_url = $dir.$metadata['cover-image'];
-        $img_path = $root_path.$dir.$metadata['cover-image'];
+        $img_url = $dir."/".$metadata['cover-image'];
+        $img_path = $root_path.$dir."/".$metadata['cover-image'];
 
         $html .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($img_url).'\')">';
         $html .= '<picture>';

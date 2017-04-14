@@ -4,11 +4,10 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/bin/post.php';
-require_once __DIR__ . '/bin/router.php';
 require_once __DIR__ . '/bin/gd.php';
 
-$root_path = getRootPath();
-$uri = getUri($root_path, $_SERVER['REQUEST_URI']);
+$root_path = dirname($_SERVER["DOCUMENT_URI"])."/";
+$uri = current(explode("?", basename($_SERVER['REQUEST_URI'])));
 
 // check if this is a job for gd
 if ($uri == "_gd") {
@@ -59,11 +58,9 @@ if(file_exists($uri)) {
     }
 
 } else {
-
     header("HTTP/1.1 404 Not Found");
     echo "404 Not Found";
     exit;
-
 }
 
 ?>
