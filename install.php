@@ -25,4 +25,3 @@ if ($RESULT !== 0) {
 }
 
 shell_exec('php bin/composer install');
-?>

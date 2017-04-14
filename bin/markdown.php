@@ -17,105 +17,106 @@ use League\CommonMark\Inline\Renderer\InlineRendererInterface;
 
 class PictureRenderer implements InlineRendererInterface
 {
-	private $pathToGD;
+    private $pathToGD;
     private $host;
     private $dir;
     private $root_path;
 
-	public function __construct($root_path, $host, $dir)
-	{
-		$this->pathToGD = $root_path."/_gd";
+    public function __construct($root_path, $host, $dir)
+    {
+        $this->pathToGD = $root_path."/_gd";
         $this->root_path = $root_path;
         $this->host = $host;
         $this->dir = $dir;
-	}
+    }
 
-	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
-	{
-		$attrs = array();
+    public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
+    {
+        $attrs = array();
 
-		if ($inline->getUrl() != "") {
-			$src = $inline->getUrl();
+        if ($inline->getUrl() != "") {
+            $src = $inline->getUrl();
             $original = $src;
-            if(!$this->isExternalUrl($src)) {
+            if (!$this->isExternalUrl($src)) {
                 $src = $this->dir.$src;
                 $original = $this->root_path."/".$src;
             }
             $innerHTML = "";
-            for($i = 0; $i < 20; $i++) {
+            for ($i = 0; $i < 20; $i++) {
                 $screenWidth = 100 + 100 * $i;
                 $size = min(800, $screenWidth);
                 $innerHTML .= '<source srcset="'.$this->pathToGD.'?url='.urlencode($src).'&w='.$size.'" media="(max-width: '.$screenWidth.'px)">';
-            } 
+            }
             $innerHTML .= '<img src="'.$original.'">';
-		}
+        }
 
         return new HtmlElement('picture', $attrs, $innerHTML);
-	}
+    }
 
-	private function isExternalUrl($url)
+    private function isExternalUrl($url)
     {
-		return parse_url($url, PHP_URL_HOST) != NULL && parse_url($url, PHP_URL_HOST) !== $this->host;
-	}
+        return parse_url($url, PHP_URL_HOST) != null && parse_url($url, PHP_URL_HOST) !== $this->host;
+    }
 }
 
 
 class ExternalLinkRenderer implements InlineRendererInterface
 {
-	private $host;
+    private $host;
 
-	public function __construct($host)
-	{
-		$this->host = $host;
-	}
-
-	public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
-	{
-		if (!($inline instanceof Link)) {
-			throw new \InvalidArgumentException('Incompatible inline type: ' . get_class($inline));
-		}
-
-		$attrs = array();
-
-		$attrs['href'] = $htmlRenderer->escape($inline->getUrl(), true);
-
-		if (isset($inline->attributes['title'])) {
-			$attrs['title'] = $htmlRenderer->escape($inline->data['title'], true);
-		}
-
-		if ($this->isExternalUrl($inline->getUrl())) {
-			$attrs['target'] = '_blank';
-		}
-
-		return new HtmlElement('a', $attrs, $htmlRenderer->renderInlines($inline->children()));
-	}
-
-	private function isExternalUrl($url)
+    public function __construct($host)
     {
-		return parse_url($url, PHP_URL_HOST) != NULL && parse_url($url, PHP_URL_HOST) !== $this->host;
-	}
+        $this->host = $host;
+    }
+
+    public function render(AbstractInline $inline, ElementRendererInterface $htmlRenderer)
+    {
+        if (!($inline instanceof Link)) {
+            throw new \InvalidArgumentException('Incompatible inline type: ' . get_class($inline));
+        }
+
+        $attrs = array();
+
+        $attrs['href'] = $htmlRenderer->escape($inline->getUrl(), true);
+
+        if (isset($inline->attributes['title'])) {
+            $attrs['title'] = $htmlRenderer->escape($inline->data['title'], true);
+        }
+
+        if ($this->isExternalUrl($inline->getUrl())) {
+            $attrs['target'] = '_blank';
+        }
+
+        return new HtmlElement('a', $attrs, $htmlRenderer->renderInlines($inline->children()));
+    }
+
+    private function isExternalUrl($url)
+    {
+        return parse_url($url, PHP_URL_HOST) != null && parse_url($url, PHP_URL_HOST) !== $this->host;
+    }
 }
 
-function parseMarkDown($markdown, $root_path, $dir) {
-	$config = [
-		'renderer' => [
-			'block_separator' => "\n",
-			'inner_separator' => "\n",
-			'soft_break'      => "\n",
-		],
-		'enable_em' => true,
-		'enable_strong' => true,
-		'use_asterisk' => true,
-		'use_underscore' => true,
-	];
+function parseMarkDown($markdown, $root_path, $dir)
+{
+    $config = [
+        'renderer' => [
+            'block_separator' => "\n",
+            'inner_separator' => "\n",
+            'soft_break'      => "\n",
+        ],
+        'enable_em' => true,
+        'enable_strong' => true,
+        'use_asterisk' => true,
+        'use_underscore' => true,
+    ];
 
-	$environment = Environment::createCommonMarkEnvironment();
-	$environment->setConfig($config);
-	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Link', new ExternalLinkRenderer($_SERVER["HTTP_HOST"]));
-	$environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new PictureRenderer($root_path, $_SERVER["HTTP_HOST"], $dir));
+    $environment = Environment::createCommonMarkEnvironment();
+    $environment->setConfig($config);
+    $environment->addInlineRenderer('League\CommonMark\Inline\Element\Link', new ExternalLinkRenderer($_SERVER["HTTP_HOST"]));
+    $environment->addInlineRenderer('League\CommonMark\Inline\Element\Image', new PictureRenderer($root_path, $_SERVER["HTTP_HOST"], $dir));
 
-	$parser = new DocParser($environment);
-	$htmlRenderer = new HtmlRenderer($environment);
-	$document = $parser->parse($markdown);
-	return $htmlRenderer->renderBlock($document);
+    $parser = new DocParser($environment);
+    $htmlRenderer = new HtmlRenderer($environment);
+    $document = $parser->parse($markdown);
+    return $htmlRenderer->renderBlock($document);
 }

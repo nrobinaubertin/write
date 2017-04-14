@@ -1,12 +1,12 @@
 <?php
 
 // get informations from image
-function loadImage($src) {
-
+function loadImage($src)
+{
     list($imgWidth, $imgHeight, $type) = getimagesize($src);
     $mimeType = image_type_to_mime_type($type);
 
-    switch($mimeType) {
+    switch ($mimeType) {
     case "image/jpeg":
         $imgSource = imagecreatefromjpeg($src);
         break;
@@ -30,8 +30,9 @@ function loadImage($src) {
 }
 
 // calculate new size given a max newWidth and a max newHeight
-function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
-    if($oldWidth == 0 || $oldHeight == 0) {
+function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight)
+{
+    if ($oldWidth == 0 || $oldHeight == 0) {
         return false;
     }
 
@@ -39,15 +40,15 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
     $width = $oldWidth;
     $height = $oldHeight;
 
-    if($maxWidth != 0) {
-        if($maxWidth < $oldWidth) {
+    if ($maxWidth != 0) {
+        if ($maxWidth < $oldWidth) {
             $width = $maxWidth;
             $height = $oldHeight * $maxWidth / $oldWidth;
-        } 
+        }
     }
 
-    if($maxHeight != 0) {
-        if($maxHeight < $height) {
+    if ($maxHeight != 0) {
+        if ($maxHeight < $height) {
             $width = $width * $maxHeight / $height;
             $height = $maxHeight;
         }
@@ -58,9 +59,9 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight) {
 
 // resize image file
 // $size_array == [$maxWidth, $maxHeight]
-function resize_image($src, $size_array) {
-
-    if($src == "" || count($size_array) < 2) { 
+function resize_image($src, $size_array)
+{
+    if ($src == "" || count($size_array) < 2) {
         return false;
     }
 
@@ -80,16 +81,16 @@ function resize_image($src, $size_array) {
     imagejpeg($im);
     imagejpeg($im, $filename);
 
-    if(isset($im)) {
+    if (isset($im)) {
         imagedestroy($im);
     }
-    if(isset($img_source)) {
+    if (isset($img_source)) {
         imagedestroy($img_source);
     }
 }
 
-function base64img($src) {
-
+function base64img($src)
+{
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, 32, 32);
     $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
@@ -101,10 +102,10 @@ function base64img($src) {
     $base64img = base64_encode(ob_get_contents());
     ob_end_clean();
 
-    if(isset($im)) {
+    if (isset($im)) {
         imagedestroy($im);
     }
-    if(isset($img_source)) {
+    if (isset($img_source)) {
         imagedestroy($img_source);
     }
 
