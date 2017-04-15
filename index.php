@@ -19,7 +19,7 @@ if ($uri == "/_gd") {
     if (preg_match("/^image/", $imgInfos["mime"])) {
         $w = isset($_GET["w"]) ? intval($_GET["w"]) : 0;
         $h = isset($_GET["h"]) ? intval($_GET["h"]) : 0;
-        resize_image(urldecode($_GET["url"]), [$w, $h], $imgInfos);
+        output_image(urldecode($_GET["url"]), [$w, $h], $imgInfos);
     } else {
         header("HTTP/1.1 400 Bad Request");
         echo "400 Bad Request";

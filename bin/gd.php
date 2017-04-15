@@ -57,27 +57,32 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight)
     return [floor($width), floor($height)];
 }
 
-// resize image file
 // $size_array == [$maxWidth, $maxHeight]
-function resize_image($src, $size_array)
+function output_image($src, $size_array)
 {
     if ($src == "" || count($size_array) < 2) {
         return false;
     }
+    
+    header('Content-Type: image/jpeg');
 
     list($width, $height) = $size_array;
+    $filename = sys_get_temp_dir()."/".sha1($src.$width.$height);
+    if (file_exists($filename)) {
+        readfile($filename);
+        exit;
+    }
 
     $width = min(2000, intval($width));
     $height = min(2000, intval($height));
 
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
-    $filename = sys_get_temp_dir()."/".sha1($src.$width.$height);
 
     $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
+    //imagecrop($im, ['x' =>
 
-    header('Content-Type: image/jpeg');
     imagejpeg($im);
     imagejpeg($im, $filename);
 
@@ -87,12 +92,19 @@ function resize_image($src, $size_array)
     if (isset($img_source)) {
         imagedestroy($img_source);
     }
+    exit;
 }
 
 function base64img($src)
 {
+    $width = $height = 32;
+    $filename = sys_get_temp_dir()."/".sha1($src.$width.$height);
+    if (file_exists($filename)) {
+        return base64_encode(file_get_contents($filename));
+    }
+
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
-    list($width, $height) = calcNewSize($imgWidth, $imgHeight, 32, 32);
+    list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
     $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
     imagefilter($im, IMG_FILTER_GAUSSIAN_BLUR);
@@ -101,6 +113,8 @@ function base64img($src)
     imagejpeg($im);
     $base64img = base64_encode(ob_get_contents());
     ob_end_clean();
+
+    imagejpeg($im, $filename);
 
     if (isset($im)) {
         imagedestroy($im);
