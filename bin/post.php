@@ -43,7 +43,7 @@ function locateFont($font, $dir, $root_path)
     if (in_array(pathinfo($font, PATHINFO_EXTENSION), $formats)) {
         $location = searchFile($font, $dir, $root_path);
         if (file_exists($location)) {
-            return 'url("'.$root_path.$location.'")';
+            return $location;
         } else {
             return "";
         }
@@ -53,11 +53,47 @@ function locateFont($font, $dir, $root_path)
     foreach ($formats as $ext) {
         $location = searchFile($font.'.'.$ext, $dir, $root_path);
         if (file_exists($location)) {
-            return 'url("'.$root_path."/".$location.'")';
+            return $location;
         }
     }
 
     return "";
+}
+
+function genCoverImageHTML($src, $root_path, $dir)
+{
+    if ($src == "") {
+        return ["", ""];
+    }
+
+    $coverHeight = "";
+    $coverPicture = "";
+
+    if (parse_url($src, PHP_URL_HOST) != null && parse_url($src, PHP_URL_HOST) !== $_SERVER['HTTP_HOST']) {
+        $coverImg_path = $coverImg_url = $src;
+    } else {
+        $coverImg_url = $dir."/".$src;
+        $coverImg_path = $root_path."/".$dir."/".$src;
+    }
+
+    $coverHeight .= '<style>';
+    $coverPicture .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($coverImg_url).'\')">';
+    $coverPicture .= '<picture>';
+
+    for ($i = 0; $i < 10; $i++) {
+        $screenWidth = 250 + 250 * $i;
+        $width = $screenWidth;
+        $height = floor($screenWidth * 0.75);
+        $coverHeight .= '@media (min-height: '.$screenWidth.'px) { .cover{height: '.$height.'px} .cover + main{top: '.$height.'px} }';
+        $coverPicture .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
+    }
+
+    $coverHeight .= '</style>';
+    $coverPicture .= '<img onload="this.style.opacity=1" src="'.$coverImg_path.'">';
+    $coverPicture .= '</picture>';
+    $coverPicture .= '</div>';
+
+    return [$coverHeight, $coverPicture];
 }
 
 function genPostHTML($dir, $root_path)
@@ -72,8 +108,9 @@ function genPostHTML($dir, $root_path)
     $markdown = file_get_contents($path);
     $metadata = getMetadata($markdown);
 
-    $html = "";
+    list($coverHeightHTML, $coverPictureHTML) = genCoverImageHTML($metadata['cover-image'], $root_path, $dir);
 
+    $html = "";
     $html .= '<!DOCTYPE html><html><head>';
     $html .= '<meta charset="utf8">';
     $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">';
@@ -88,57 +125,23 @@ function genPostHTML($dir, $root_path)
     }
 
     if (isset($metadata['title-font'])) {
-        $html .= '<style>@font-face{font-family:"TitleFont";src:'.locateFont($metadata['title-font'], $dir, $root_path).';} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
+        $font = locateFont($metadata['title-font'], $dir, $root_path);
+        $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.$root_path."/".$font.'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
     
     if (isset($metadata['text-font'])) {
-        $html .= '<style>@font-face{font-family:"TextFont";src:'.locateFont($metadata['text-font'], $dir, $root_path).';} body{font-family: "TextFont", serif;}</style>';
+        $font = locateFont($metadata['text-font'], $dir, $root_path);
+        $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.$root_path."/".$font.'");} body{font-family: "TextFont", sans-serif;}</style>';
     }
 
     $html .= '<style>';
     $html .= file_get_contents("style.css");
     $html .= '</style>';
-    
-    if (isset($metadata['cover-image'])) {
-        $html .= '<style>';
-        for ($i = 0; $i < 10; $i++) {
-            $screenWidth = 250 + 250 * $i;
-            $size = floor($screenWidth * 0.75);
-            $html .= '@media (min-height: '.$screenWidth.'px) { .cover{height: '.$size.'px} .cover + main{top: '.$size.'px} }';
-        }
-        $html .= '</style>';
-    }
-
+    $html .= $coverHeightHTML;
     $html .= '</head><body>';
-    
-    if (isset($metadata['cover-image'])) {
-        if (
-            parse_url($metadata['cover-image'], PHP_URL_HOST) != null
-            && parse_url($metadata['cover-image'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST']
-        ) {
-            $img_path = $img_url = $metadata['cover-image'];
-        } else {
-            $img_url = $dir."/".$metadata['cover-image'];
-            $img_path = $root_path."/".$dir."/".$metadata['cover-image'];
-        }
-
-        $html .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($img_url).'\')">';
-        $html .= '<picture>';
-        for ($i = 0; $i < 10; $i++) {
-            $screenWidth = 250 + 250 * $i;
-            $width = $screenWidth;
-            $height = floor($screenWidth * 0.75);
-            $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
-        }
-        $html .= '<img onload="this.style.opacity=1" src="'.$img_path.'">';
-        $html .= '</picture>';
-        $html .= '</div>';
-    }
-
+    $html .= $coverPictureHTML;
     $html .= '<main><article>';
-
     $html .= parseMarkDown($markdown, $root_path, $dir);
-
     $html .= '</article></main>';
     $html .= '</body></html>';
     return $html;

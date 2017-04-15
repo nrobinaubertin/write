@@ -66,22 +66,21 @@ function output_image($src, $size_array)
     
     header('Content-Type: image/jpeg');
 
-    list($width, $height) = $size_array;
-    $filename = sys_get_temp_dir()."/".sha1($src.$width.$height);
+    list($wantedWidth, $wantedHeight) = $size_array;
+    $filename = sys_get_temp_dir()."/".sha1($src.$wantedWidth.$wantedHeight);
     if (file_exists($filename)) {
         readfile($filename);
         exit;
     }
 
-    $width = min(2000, intval($width));
-    $height = min(2000, intval($height));
+    $width = min(2000, intval($wantedWidth));
+    $height = min(2000, intval($wantedHeight));
 
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
 
     $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
-    //imagecrop($im, ['x' =>
 
     imagejpeg($im);
     imagejpeg($im, $filename);
@@ -97,7 +96,7 @@ function output_image($src, $size_array)
 
 function base64img($src)
 {
-    $width = $height = 32;
+    $width = $height = 64;
     $filename = sys_get_temp_dir()."/".sha1($src.$width.$height);
     if (file_exists($filename)) {
         return base64_encode(file_get_contents($filename));
