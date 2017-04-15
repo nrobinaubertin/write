@@ -11,23 +11,25 @@ function getMetadata($mardown)
     foreach ($matches[1] as $str) {
         $a = explode(":", $str);
         $key = trim($a[0]);
-        $value = trim($a[1]);
-        $metadata[$key] = $value;
+        $value = array_reduce(array_slice($a, 2), function ($carry, $item) {
+            return $carry.":".$item;
+        }, $a[1]);
+        $metadata[$key] = trim($value);
     }
     return $metadata;
 }
 
 function searchFile($file, $dir, $root_path)
 {
-    while (!file_exists($dir.$file)) {
+    while (!file_exists($dir."/".$file)) {
         if (realpath($dir) == realpath($root_path)) {
             break;
         }
-        $dir = $dir."../";
+        $dir = $dir."/..";
     }
 
-    if (file_exists($dir.$file)) {
-        return $dir.$file;
+    if (file_exists($dir."/".$file)) {
+        return $dir."/".$file;
     } else {
         return "";
     }
@@ -51,7 +53,7 @@ function locateFont($font, $dir, $root_path)
     foreach ($formats as $ext) {
         $location = searchFile($font.'.'.$ext, $dir, $root_path);
         if (file_exists($location)) {
-            return 'url("'.$root_path.$location.'")';
+            return 'url("'.$root_path."/".$location.'")';
         }
     }
 
@@ -110,8 +112,15 @@ function genPostHTML($dir, $root_path)
     $html .= '</head><body>';
     
     if (isset($metadata['cover-image'])) {
-        $img_url = $dir."/".$metadata['cover-image'];
-        $img_path = $root_path.$dir."/".$metadata['cover-image'];
+        if (
+            parse_url($metadata['cover-image'], PHP_URL_HOST) != null
+            && parse_url($metadata['cover-image'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST']
+        ) {
+            $img_path = $img_url = $metadata['cover-image'];
+        } else {
+            $img_url = $dir."/".$metadata['cover-image'];
+            $img_path = $root_path."/".$dir."/".$metadata['cover-image'];
+        }
 
         $html .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($img_url).'\')">';
         $html .= '<picture>';
@@ -119,7 +128,7 @@ function genPostHTML($dir, $root_path)
             $screenWidth = 250 + 250 * $i;
             $width = $screenWidth;
             $height = floor($screenWidth * 0.75);
-            $html .= '<source srcset="'.$root_path.'_gd?url='.urlencode($img_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
+            $html .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($img_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
         }
         $html .= '<img onload="this.style.opacity=1" src="'.$img_path.'">';
         $html .= '</picture>';

@@ -6,11 +6,15 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/bin/post.php';
 require_once __DIR__ . '/bin/gd.php';
 
-$root_path = dirname($_SERVER["DOCUMENT_URI"])."/";
-$uri = current(explode("?", basename($_SERVER['REQUEST_URI'])));
+$root_path = dirname($_SERVER["DOCUMENT_URI"]);
+$uri = current(explode("?", dirname($_SERVER['REQUEST_URI'])));
+
+if ($root_path == $uri) {
+    $uri = "/".current(explode("?", basename($_SERVER['REQUEST_URI'])));
+}
 
 // check if this is a job for gd
-if ($uri == "_gd") {
+if ($uri == "/_gd") {
     $imgInfos = getimagesize($_GET["url"]);
     if (preg_match("/^image/", $imgInfos["mime"])) {
         $w = isset($_GET["w"]) ? intval($_GET["w"]) : 0;
@@ -23,9 +27,10 @@ if ($uri == "_gd") {
     exit;
 }
 
+
 // make sure that we point to the post directory
-if (substr($uri, 0, strlen("posts/")) != "posts/") {
-    $uri = "posts/" . $uri;
+if (substr($uri, 0, strlen("posts")) != "posts") {
+    $uri = "posts" . $uri;
 }
 
 if (file_exists($uri)) {
