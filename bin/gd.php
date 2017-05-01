@@ -3,7 +3,13 @@
 // get informations from image
 function loadImage($src)
 {
+    set_error_handler(function() {
+        return [0, 0, 0, false];
+    });
     list($imgWidth, $imgHeight, $type) = getimagesize($src);
+    if(intval($imgWidth) == 0 || intval($imgHeight) == 0) {
+        return [0, 0, 0, false];
+    }
     $mimeType = image_type_to_mime_type($type);
 
     switch ($mimeType) {
@@ -26,6 +32,7 @@ function loadImage($src)
         $imgSource = false;
     }
 
+    restore_error_handler();
     return [$imgWidth, $imgHeight, $mimeType, $imgSource];
 }
 
@@ -60,8 +67,8 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight)
 // $size_array == [$maxWidth, $maxHeight]
 function output_image($src, $size_array)
 {
-    if ($src == "" || count($size_array) < 2) {
-        return false;
+    if ($src == "" || count($size_array) < 2 || intval($size_array[0]) == 0 || intval($size_array[1]) == 0) {
+        exit;
     }
     
     header('Content-Type: image/jpeg');
@@ -79,7 +86,10 @@ function output_image($src, $size_array)
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
 
-    $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
+    $im = imagecreatetruecolor($width, $height);
+    if(!$im) {
+        exit;
+    }
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
 
     imagejpeg($im);
@@ -96,6 +106,10 @@ function output_image($src, $size_array)
 
 function base64img($src)
 {
+    if ($src == "") {
+        return false;
+    }
+    
     $width = $height = 64;
     $filename = sys_get_temp_dir()."/".sha1($src.$width.$height);
     if (file_exists($filename)) {
@@ -104,7 +118,10 @@ function base64img($src)
 
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
-    $im = imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
+    $im = imagecreatetruecolor($width, $height);
+    if(!$im) {
+        return false;
+    }
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
     imagefilter($im, IMG_FILTER_GAUSSIAN_BLUR);
 

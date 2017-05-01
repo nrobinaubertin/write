@@ -89,7 +89,7 @@ function genCoverImageHTML($src, $root_path, $dir)
     }
 
     $coverHeight .= '</style>';
-    $coverPicture .= '<img onload="this.style.opacity=1" src="'.$coverImg_path.'">';
+    $coverPicture .= '<img onerror="document.body.removeChild(document.body.firstChild)" onload="this.style.opacity=1" src="'.$coverImg_path.'">';
     $coverPicture .= '</picture>';
     $coverPicture .= '</div>';
 
