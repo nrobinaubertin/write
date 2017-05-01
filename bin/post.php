@@ -78,10 +78,10 @@ function genCoverImageHTML($src, $root_path, $dir)
     $coverPicture .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($coverImg_url).'\')">';
     $coverPicture .= '<picture>';
 
-    for ($i = 0; $i < 10; $i++) {
-        $screenWidth = 250 + 250 * $i;
+    for ($i = 0; $i < 20; $i++) {
+        $screenWidth = 100 + 100 * $i;
         $width = $screenWidth;
-        $height = floor($screenWidth * 0.85);
+        $height = floor($screenWidth * 0.80);
         $coverPicture .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
     }
 
@@ -92,13 +92,9 @@ function genCoverImageHTML($src, $root_path, $dir)
     // (vh is not an option due to this issue : http://stackoverflow.com/questions/24944925/background-image-jumps-when-address-bar-hides-ios-android-mobile-chrome)
     $coverPicture .= '
     <script>
-        function resizeCover() {
-            document.querySelectorAll(".cover,.cover>picture").forEach(
-                e => e.style.height = Math.floor(window.innerHeight*.8)+"px"
-            );
-        }
-        window.addEventListener("resize", resizeCover);
-        resizeCover();
+        document.querySelectorAll(".cover, .cover > picture").forEach(
+            e => e.style.height = Math.floor(window.innerHeight * .80) + "px"
+        );
     </script>
     ';
 
