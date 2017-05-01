@@ -3,11 +3,11 @@
 // get informations from image
 function loadImage($src)
 {
-    set_error_handler(function() {
+    set_error_handler(function () {
         return [0, 0, 0, false];
     });
     list($imgWidth, $imgHeight, $type) = getimagesize($src);
-    if(intval($imgWidth) == 0 || intval($imgHeight) == 0) {
+    if (intval($imgWidth) == 0 || intval($imgHeight) == 0) {
         return [0, 0, 0, false];
     }
     $mimeType = image_type_to_mime_type($type);
@@ -87,7 +87,7 @@ function output_image($src, $size_array)
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
 
     $im = imagecreatetruecolor($width, $height);
-    if(!$im) {
+    if (!$im) {
         exit;
     }
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);
@@ -119,7 +119,7 @@ function base64img($src)
     list($imgWidth, $imgHeight, $mimeType, $imgSource) = loadImage($src);
     list($width, $height) = calcNewSize($imgWidth, $imgHeight, $width, $height);
     $im = imagecreatetruecolor($width, $height);
-    if(!$im) {
+    if (!$im) {
         return false;
     }
     imagecopyresampled($im, $imgSource, 0, 0, 0, 0, $width, $height, $imgWidth, $imgHeight);

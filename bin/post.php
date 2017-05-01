@@ -66,7 +66,6 @@ function genCoverImageHTML($src, $root_path, $dir)
         return ["", ""];
     }
 
-    $coverHeight = "";
     $coverPicture = "";
 
     if (parse_url($src, PHP_URL_HOST) != null && parse_url($src, PHP_URL_HOST) !== $_SERVER['HTTP_HOST']) {
@@ -76,24 +75,34 @@ function genCoverImageHTML($src, $root_path, $dir)
         $coverImg_path = $root_path."/".$dir."/".$src;
     }
 
-    $coverHeight .= '<style>';
     $coverPicture .= '<div class="cover" style="background-image:url(\'data:image/jpeg;base64,'.base64img($coverImg_url).'\')">';
     $coverPicture .= '<picture>';
 
     for ($i = 0; $i < 10; $i++) {
         $screenWidth = 250 + 250 * $i;
         $width = $screenWidth;
-        $height = floor($screenWidth * 0.75);
-        $coverHeight .= '@media (min-height: '.$screenWidth.'px) { .cover{height: '.$height.'px} .cover + main{top: '.$height.'px} }';
+        $height = floor($screenWidth * 0.85);
         $coverPicture .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
     }
 
-    $coverHeight .= '</style>';
     $coverPicture .= '<img onerror="document.body.removeChild(document.body.firstChild)" onload="this.style.opacity=1" src="'.$coverImg_path.'">';
     $coverPicture .= '</picture>';
     $coverPicture .= '</div>';
+    // We add a bit of js to ensure a proper height for the cover
+    // (vh is not an option due to this issue : http://stackoverflow.com/questions/24944925/background-image-jumps-when-address-bar-hides-ios-android-mobile-chrome)
+    $coverPicture .= '
+    <script>
+        function resizeCover() {
+            document.querySelectorAll(".cover,.cover>picture").forEach(
+                e => e.style.height = Math.floor(window.innerHeight*.8)+"px"
+            );
+        }
+        window.addEventListener("resize", resizeCover);
+        resizeCover();
+    </script>
+    ';
 
-    return [$coverHeight, $coverPicture];
+    return $coverPicture;
 }
 
 function genPostHTML($dir, $root_path)
@@ -108,7 +117,7 @@ function genPostHTML($dir, $root_path)
     $markdown = file_get_contents($path);
     $metadata = getMetadata($markdown);
 
-    list($coverHeightHTML, $coverPictureHTML) = genCoverImageHTML($metadata['cover-image'], $root_path, $dir);
+    $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir);
 
     $html = "";
     $html .= '<!DOCTYPE html><html><head>';
@@ -137,7 +146,6 @@ function genPostHTML($dir, $root_path)
     $html .= '<style>';
     $html .= file_get_contents("style.css");
     $html .= '</style>';
-    $html .= $coverHeightHTML;
     $html .= '</head><body>';
     $html .= $coverPictureHTML;
     $html .= '<main><article>';

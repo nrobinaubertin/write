@@ -4,11 +4,19 @@ body {
 
 .cover {
     overflow: hidden;
-    position: fixed;
-    width: 100vw;
+    width: 100%;
     z-index: -1;
     background-size: cover;
     background-position: center;
+    height: 0;
+}
+
+.cover > picture {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
 }
 
 .cover img {
@@ -30,15 +38,23 @@ main {
     padding-top: 1rem;
 }
 
+.cover ~ main > article {
+    position: relative;
+    top: -5rem;
+    background-color: #fcfcfc;
+}
+
 article {
     overflow-x: hidden;
-    max-width: calc(100% - 3rem);
+    max-width: calc(100% - 6rem);
     width: 45rem;
     margin: 0 auto;
     font-size: 1.1rem;
     line-height: 1.8rem;
     color: #444;
-    padding: 0 1.5rem 1rem 1.5rem;
+    padding: 0 3rem;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }
 
 h1 {
@@ -54,7 +70,6 @@ small {
 a, a:focus {
     text-decoration: underline;
     color: inherit;
-    /*color: #07a;*/
 }
 
 img {
