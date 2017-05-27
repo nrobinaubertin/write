@@ -24,7 +24,7 @@ class PictureRenderer implements InlineRendererInterface
 
     public function __construct($root_path, $host, $dir)
     {
-        $this->pathToGD = $root_path."/_gd";
+        $this->pathToGD = $root_path."_gd";
         $this->root_path = $root_path;
         $this->host = $host;
         $this->dir = $dir;

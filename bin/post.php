@@ -21,15 +21,15 @@ function getMetadata($mardown)
 
 function searchFile($file, $dir, $root_path)
 {
-    while (!file_exists($dir."/".$file)) {
+    while (!file_exists($dir.$file)) {
         if (realpath($dir) == realpath($root_path)) {
             break;
         }
-        $dir = $dir."/..";
+        $dir = $dir."../";
     }
 
-    if (file_exists($dir."/".$file)) {
-        return $dir."/".$file;
+    if (file_exists($dir.$file)) {
+        return $dir.$file;
     } else {
         return "";
     }
@@ -60,7 +60,7 @@ function locateFont($font, $dir, $root_path)
     return "";
 }
 
-function genCoverImageHTML($src, $root_path, $dir)
+function genCoverImageHTML($src, $root_path, $dir, $root_url)
 {
     if ($src == "") {
         return ["", ""];
@@ -82,7 +82,7 @@ function genCoverImageHTML($src, $root_path, $dir)
         $screenWidth = 100 + 100 * $i;
         $width = $screenWidth;
         $height = floor($screenWidth * 0.80);
-        $coverPicture .= '<source srcset="'.$root_path.'/_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
+        $coverPicture .= '<source srcset="'.$root_url.'_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
     }
 
     $coverPicture .= '<img onerror="document.body.removeChild(document.body.firstChild)" onload="this.style.opacity=1" src="'.$coverImg_path.'">';
@@ -101,7 +101,7 @@ function genCoverImageHTML($src, $root_path, $dir)
     return $coverPicture;
 }
 
-function genPostHTML($dir, $root_path)
+function genPostHTML($dir, $root_path, $root_url)
 {
     foreach (scandir($dir) as $file) {
         if (pathinfo($file, PATHINFO_EXTENSION) == "md") {
@@ -109,11 +109,15 @@ function genPostHTML($dir, $root_path)
             break;
         }
     }
+    if($path == null) {
+        echo "No markdown file here !";
+        exit;
+    }
 
     $markdown = file_get_contents($path);
     $metadata = getMetadata($markdown);
 
-    $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir);
+    $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir, $root_url);
 
     $html = "";
     $html .= '<!DOCTYPE html><html><head>';
@@ -131,12 +135,12 @@ function genPostHTML($dir, $root_path)
 
     if (isset($metadata['title-font'])) {
         $font = locateFont($metadata['title-font'], $dir, $root_path);
-        $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.$root_path."/".$font.'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
+        $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.$root_url.$font.'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
     
     if (isset($metadata['text-font'])) {
         $font = locateFont($metadata['text-font'], $dir, $root_path);
-        $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.$root_path."/".$font.'");} body{font-family: "TextFont", sans-serif;}</style>';
+        $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.$root_url.$font.'");} body{font-family: "TextFont", sans-serif;}</style>';
     }
 
     $html .= '<style>';
@@ -145,7 +149,7 @@ function genPostHTML($dir, $root_path)
     $html .= '</head><body>';
     $html .= $coverPictureHTML;
     $html .= '<main><article>';
-    $html .= parseMarkDown($markdown, $root_path, $dir);
+    $html .= parseMarkDown($markdown, $root_url, $dir);
     $html .= '</article></main>';
     $html .= '</body></html>';
     return $html;

@@ -6,8 +6,9 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/bin/post.php';
 require_once __DIR__ . '/bin/gd.php';
 
+$root_url = "//".$_SERVER["HTTP_HOST"].dirname($_SERVER["DOCUMENT_URI"]);
 $root_path = dirname($_SERVER["DOCUMENT_URI"]);
-$uri = current(explode("?", dirname($_SERVER['REQUEST_URI'])));
+$uri = current(explode("?", $_SERVER['REQUEST_URI']));
 
 if ($root_path == $uri) {
     $uri = "/".current(explode("?", basename($_SERVER['REQUEST_URI'])));
@@ -45,7 +46,7 @@ if (file_exists($uri)) {
             exit;
         }
 
-        echo genPostHTML($uri, $root_path);
+        echo genPostHTML($uri, $root_path, $root_url);
         exit;
     } else {
         if (is_readable($uri)) {
