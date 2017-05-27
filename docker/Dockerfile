@@ -1,5 +1,8 @@
 FROM alpine:edge
 
+ENV UID 791
+ENV GID 791
+
 RUN apk update
 
 # install core
@@ -25,16 +28,19 @@ COPY s6.d /etc/s6.d
 
 # set the www user
 RUN set -xe \
-    && adduser -D -u 1000 -g 'www' www \
     && mkdir /www \
-    && mkdir /log \
-    && mkdir -p /log/php \
-    && mkdir -p /log/nginx \
-    && chown -R www:www /www /log /var/lib /etc/s6.d \
-    && chmod -R +x /usr/local/bin /etc/s6.d
+    && mkdir -p /php/logs \
+    && mkdir -p /nginx/logs \
+    && mkdir -p /nginx/tmp/client_body \
+    && mkdir -p /nginx/tmp/proxy \
+    && mkdir -p /nginx/tmp/fastcgi \
+    && mkdir -p /nginx/tmp/uwsgi \
+    && mkdir -p /var/lib/nginx/logs \
+    && chmod -R +x /usr/local/bin /etc/s6.d /var/lib/nginx \
+    && chown -R ${UID}:${GID} /www /php /nginx /etc/s6.d /var/log/nginx /var/tmp/nginx
 
 VOLUME /www
 
-EXPOSE 80 443
+EXPOSE 8080
 
 CMD ["run.sh"]
