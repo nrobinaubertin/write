@@ -63,7 +63,7 @@ function locateFont($font, $dir, $root_path)
 function genCoverImageHTML($src, $root_path, $dir, $root_url)
 {
     if ($src == "") {
-        return ["", ""];
+        return "";
     }
 
     $coverPicture = "";
@@ -81,7 +81,7 @@ function genCoverImageHTML($src, $root_path, $dir, $root_url)
     for ($i = 0; $i < 20; $i++) {
         $screenWidth = 100 + 100 * $i;
         $width = $screenWidth;
-        $height = floor($screenWidth * 0.80);
+        $height = floor($screenWidth * 0.70);
         $coverPicture .= '<source srcset="'.$root_url.'_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
     }
 
@@ -93,7 +93,7 @@ function genCoverImageHTML($src, $root_path, $dir, $root_url)
     $coverPicture .= '
     <script>
         document.querySelectorAll(".cover, .cover > picture").forEach(
-            e => e.style.height = Math.floor(window.innerHeight * .80) + "px"
+            e => e.style.height = Math.floor(window.innerHeight * .70) + "px"
         );
     </script>
     ';
@@ -105,7 +105,7 @@ function genPostHTML($dir, $root_path, $root_url)
 {
     foreach (scandir($dir) as $file) {
         if (pathinfo($file, PATHINFO_EXTENSION) == "md") {
-            $path = $dir."/".$file;
+            $path = $dir.$file;
             break;
         }
     }
@@ -148,7 +148,13 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '</style>';
     $html .= '</head><body>';
     $html .= $coverPictureHTML;
-    $html .= '<main><article>';
+    $html .= '<main>';
+    if ($dir != "posts/") {
+        $html .= '<header>';
+        $html .= '<a href="'.$root_url.'">&lt;- back home</a>';
+        $html .= '</header>';
+    }
+    $html .= '<article>';
     $html .= parseMarkDown($markdown, $root_url, $dir);
     $html .= '</article></main>';
     $html .= '</body></html>';
