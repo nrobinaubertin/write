@@ -124,13 +124,17 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '<meta charset="utf8">';
     $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">';
 
-    if (isset($metadata["title"])) {
+    if (!empty($metadata["title"])) {
         $html .= '<title>'.$metadata['title'].'</title>';
         $html .= '<meta property="og:title" content="'.$metadata["title"].'">';
     }
 
-    if (isset($metadata["description"])) {
+    if (!empty($metadata["description"])) {
         $html .= '<meta property="og:description" content="'.$metadata["description"].'">';
+    }
+    
+    if (!empty($metadata["cover-image"])) {
+        $html .= '<meta property="og:image" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$root_url.$dir.$metadata["cover-image"].'">';
     }
 
     if (isset($metadata['title-font'])) {
@@ -151,7 +155,7 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '<main>';
     if ($dir != "posts/") {
         $html .= '<header>';
-        $html .= '<a href="'.$root_url.'">&lt;- back home</a>';
+        $html .= '<a href="'.$root_url.'">&lt;--</a>';
         $html .= '</header>';
     }
     $html .= '<article>';
