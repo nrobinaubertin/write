@@ -32,6 +32,13 @@ body {
     transition: 1s;
 }
 
+#progress {
+    position: fixed;
+    z-index: 10;
+    height: 3px;
+    background: #000;
+}
+
 main {
     position: relative;
     background-color: #fdfdfd;

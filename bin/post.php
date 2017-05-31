@@ -151,6 +151,13 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= file_get_contents("style.css");
     $html .= '</style>';
     $html .= '</head><body>';
+    $html .= '<div id="progress"></div>';
+    $html .= '
+        <script>
+            document.addEventListener("scroll", function() {
+                document.getElementById("progress").style.width = window.scrollY/window.scrollMaxY*100 + "%";
+            });
+        </script>';
     $html .= $coverPictureHTML;
     $html .= '<main>';
     if ($dir != "posts/") {
