@@ -103,6 +103,9 @@ function genCoverImageHTML($src, $root_path, $dir, $root_url)
 
 function genPostHTML($dir, $root_path, $root_url)
 {
+
+
+
     foreach (scandir($dir) as $file) {
         if (pathinfo($file, PATHINFO_EXTENSION) == "md") {
             $path = $dir.$file;
@@ -115,6 +118,12 @@ function genPostHTML($dir, $root_path, $root_url)
     }
 
     $markdown = file_get_contents($path);
+
+    $filename = sys_get_temp_dir()."/".sha1($markdown);
+    if (file_exists($filename)) {
+        return file_get_contents($filename);
+    }
+
     $metadata = getMetadata($markdown);
 
     $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir, $root_url);
@@ -164,5 +173,9 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '</article></main>';
     $html .= '</body>';
     $html .= '</html>';
+    
+    $filename = sys_get_temp_dir()."/".sha1($html);
+    file_put_contents($filename, $html);
+
     return $html;
 }
