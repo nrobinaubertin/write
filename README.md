@@ -33,5 +33,12 @@ location /write {
 }
 ```
 
-Docker is a good way to get up and running in no time.  
-Just use my dockerfile [nginx-php](https://github.com/nrobinaubertin/dockerfiles/tree/master/nginx-php) with PHP_EXT="php7-json php7-gd php7-mbstring php7-openssl".
+Docker is a good way to get up and running in no time, just use my dockerfile [nginx-php](https://github.com/nrobinaubertin/dockerfiles/tree/master/nginx-php).  
+Build it with the command:
+```
+docker build -t write --build-arg PHP_EXT="php7-json php7-gd php7-mbstring php7-openssl"
+```
+And run it like this:
+```
+docker run -d -p 80:8080 -v $(pwd)/example.nginx.conf:/etc/nginx/nginx.conf -v $(pwd):/www --name write write
+```
