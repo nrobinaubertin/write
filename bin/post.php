@@ -155,17 +155,11 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '
         <script>
             document.addEventListener("scroll", function() {
-                document.getElementById("progress").style.width = window.scrollY/window.scrollMaxY*100 + "%";
+                document.getElementById("progress").style.width = window.scrollY/(document.body.scrollHeight - window.innerHeight)*100 + "%";
             });
         </script>';
     $html .= $coverPictureHTML;
-    $html .= '<main>';
-    if ($dir != "posts/") {
-        $html .= '<header>';
-        $html .= '<a href="'.$root_url.'">&lt;--</a>';
-        $html .= '</header>';
-    }
-    $html .= '<article>';
+    $html .= '<main><article>';
     $html .= parseMarkDown($markdown, $root_url, $dir);
     $html .= '</article></main>';
     $html .= '</body>';

@@ -69,12 +69,18 @@ header a:hover {
 article {
     overflow-x: hidden;
     max-width: calc(100% - 2rem);
-    width: 40rem;
+    width: 45rem;
     margin: 0 auto;
-    font-size: 1.15rem;
-    line-height: 1.8rem;
-    color: #444;
-    padding: 0 1rem;
+    font-size: 1.2rem;
+    line-height: 1.9rem;
+    color: #333;
+    padding: 1rem 1rem 5rem 1rem;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+p {
+    margin: 0rem 0rem 1rem 0rem;
 }
 
 h1 {
