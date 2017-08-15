@@ -163,7 +163,6 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= parseMarkDown($markdown, $root_url, $dir);
     $html .= '</article></main>';
     $html .= '</body>';
-    $html .= '<script src="/scripts.js"></script>';
     $html .= '</html>';
     return $html;
 }
