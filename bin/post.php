@@ -126,7 +126,10 @@ function genPostHTML($dir, $root_path, $root_url)
 
     $metadata = getMetadata($markdown);
 
-    $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir, $root_url);
+    $coverPictureHTML = "";
+    if (isset($metadata['cover-image'])) {
+        $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir, $root_url);
+    }
 
     $html = "";
     $html .= '<!DOCTYPE html><html><head>';
