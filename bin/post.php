@@ -101,11 +101,34 @@ function genCoverImageHTML($src, $root_path, $dir, $root_url)
     return $coverPicture;
 }
 
+function genMeta($metadata, $dir, $root_path, $root_url)
+{
+    $canonical_url = $root_url.preg_replace("/^posts\//","",$dir);
+
+    $html = "";
+    $html .= '<meta charset="utf8">';
+    $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">';
+    $html .= '<meta property="og:url" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$canonical_url.'">';
+    $html .= '<meta property="og:type" content="article">';
+
+    if (!empty($metadata["title"])) {
+        $html .= '<title>'.$metadata['title'].'</title>';
+        $html .= '<meta property="og:title" content="'.$metadata["title"].'">';
+    }
+
+    if (!empty($metadata["description"])) {
+        $html .= '<meta property="og:description" content="'.$metadata["description"].'">';
+    }
+    
+    if (!empty($metadata["cover-image"])) {
+        //$html .= '<meta property="og:image" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$root_url.$dir.$metadata["cover-image"].'">';
+        $html .= '<meta property="og:image" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$root_url.'_gd?url='.urlencode($dir.$metadata["cover-image"]).'&w=1024&h=768">';
+    }
+    return $html;
+}
+
 function genPostHTML($dir, $root_path, $root_url)
 {
-
-
-
     foreach (scandir($dir) as $file) {
         if (pathinfo($file, PATHINFO_EXTENSION) == "md") {
             $path = $dir.$file;
@@ -124,6 +147,7 @@ function genPostHTML($dir, $root_path, $root_url)
         return file_get_contents($filename);
     }
 
+
     $metadata = getMetadata($markdown);
 
     $coverPictureHTML = "";
@@ -133,21 +157,7 @@ function genPostHTML($dir, $root_path, $root_url)
 
     $html = "";
     $html .= '<!DOCTYPE html><html><head>';
-    $html .= '<meta charset="utf8">';
-    $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">';
-
-    if (!empty($metadata["title"])) {
-        $html .= '<title>'.$metadata['title'].'</title>';
-        $html .= '<meta property="og:title" content="'.$metadata["title"].'">';
-    }
-
-    if (!empty($metadata["description"])) {
-        $html .= '<meta property="og:description" content="'.$metadata["description"].'">';
-    }
-    
-    if (!empty($metadata["cover-image"])) {
-        $html .= '<meta property="og:image" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$root_url.$dir.$metadata["cover-image"].'">';
-    }
+    $html .= genMeta($metadata, $dir, $root_path, $root_url);
 
     if (isset($metadata['title-font'])) {
         $font = locateFont($metadata['title-font'], $dir, $root_path);
