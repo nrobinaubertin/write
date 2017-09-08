@@ -85,7 +85,7 @@ function genCoverImageHTML($src, $root_path, $dir, $root_url)
         $coverPicture .= '<source srcset="'.$root_url.'_gd?url='.urlencode($coverImg_url).'&w='.$width.'&h='.$height.'" media="(max-width: '.$width.'px) and (max-height: '.$height.'px)">';
     }
 
-    $coverPicture .= '<img onerror="document.body.removeChild(document.body.firstChild)" onload="this.style.opacity=1" src="'.$coverImg_path.'">';
+    $coverPicture .= '<img onerror="document.body.removeChild(document.body.firstChild)" onload="this.style.opacity=1" src="'.$coverImg_url.'">';
     $coverPicture .= '</picture>';
     $coverPicture .= '</div>';
     // We add a bit of js to ensure a proper height for the cover
