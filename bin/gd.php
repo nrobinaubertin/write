@@ -67,7 +67,7 @@ function calcNewSize($oldWidth, $oldHeight, $maxWidth, $maxHeight)
 // $size_array == [$maxWidth, $maxHeight]
 function output_image($src, $size_array)
 {
-    if ($src == "" || count($size_array) < 2) {
+    if (!$src || count($size_array) < 2) {
         exit;
     }
     
@@ -106,7 +106,7 @@ function output_image($src, $size_array)
 
 function base64img($src)
 {
-    if ($src == "") {
+    if (!$src) {
         return false;
     }
     

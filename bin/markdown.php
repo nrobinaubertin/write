@@ -34,7 +34,7 @@ class PictureRenderer implements InlineRendererInterface
     {
         $attrs = array();
 
-        if ($inline->getUrl() != "") {
+        if ($inline->getUrl()) {
             $src = $inline->getUrl();
             $original = $src;
             if (!$this->isExternalUrl($src)) {

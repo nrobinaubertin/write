@@ -15,7 +15,7 @@ if ($root_path == $uri) {
 }
 
 // check if this is a job for gd
-if ($uri == "/_gd") {
+if ($uri === "/_gd") {
     $imgInfos = getimagesize($_GET["url"]);
     if (preg_match("/^image/", $imgInfos["mime"])) {
         $w = isset($_GET["w"]) ? intval($_GET["w"]) : 0;
@@ -27,7 +27,6 @@ if ($uri == "/_gd") {
     }
     exit;
 }
-
 
 // make sure that we point to the post directory
 if (substr($uri, 0, strlen("posts")) != "posts") {

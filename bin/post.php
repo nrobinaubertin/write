@@ -62,7 +62,7 @@ function locateFont($font, $dir, $root_path)
 
 function genCoverImageHTML($src, $root_path, $dir, $root_url)
 {
-    if ($src == "") {
+    if (!$src) {
         return "";
     }
 
@@ -135,7 +135,7 @@ function genPostHTML($dir, $root_path, $root_url)
             break;
         }
     }
-    if($path == null) {
+    if(!isset($path)) {
         echo "No markdown file here !";
         exit;
     }
@@ -146,7 +146,6 @@ function genPostHTML($dir, $root_path, $root_url)
     if (file_exists($filename)) {
         return file_get_contents($filename);
     }
-
 
     $metadata = getMetadata($markdown);
 
@@ -170,7 +169,7 @@ function genPostHTML($dir, $root_path, $root_url)
     }
 
     $html .= '<style>';
-    $html .= file_get_contents("style.css");
+    $html .= file_get_contents("default.css");
     $html .= '</style>';
     $html .= '</head><body>';
     $html .= '<div id="progress"></div>';
