@@ -35,23 +35,19 @@ function searchFile($file, $dir, $root_path)
     }
 }
 
-function locateFont($font, $dir, $root_path)
+function locateFile($file, $dir, $root_path, $formats = [])
 {
-    $formats = ["woff2", "woff", "ttf", "otf"];
-
     // if the extension is given, serve this format only
-    if (in_array(pathinfo($font, PATHINFO_EXTENSION), $formats)) {
-        $location = searchFile($font, $dir, $root_path);
-        if (file_exists($location)) {
-            return $location;
-        } else {
-            return "";
-        }
+    $location = searchFile($file, $dir, $root_path);
+    if (file_exists($location)) {
+        return $location;
+    } else {
+        return "";
     }
 
     // if the extension is not given, try different formats
     foreach ($formats as $ext) {
-        $location = searchFile($font.'.'.$ext, $dir, $root_path);
+        $location = searchFile($file.'.'.$ext, $dir, $root_path);
         if (file_exists($location)) {
             return $location;
         }
@@ -158,18 +154,27 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '<!DOCTYPE html><html><head>';
     $html .= genMeta($metadata, $dir, $root_path, $root_url);
 
+    $fontFormats = ["woff2", "woff", "ttf", "otf"];
+
     if (isset($metadata['title-font'])) {
-        $font = locateFont($metadata['title-font'], $dir, $root_path);
+        $font = locateFile($metadata['title-font'], $dir, $root_path, $fontFormats);
         $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.$root_url.$font.'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
     
     if (isset($metadata['text-font'])) {
-        $font = locateFont($metadata['text-font'], $dir, $root_path);
+        $font = locateFile($metadata['text-font'], $dir, $root_path, $fontFormats);
         $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.$root_url.$font.'");} body{font-family: "TextFont", sans-serif;}</style>';
+    }
+    
+    if (isset($metadata['style-file'])) {
+        $cssFile = locateFile($metadata['style-file'], $dir, $root_path);
+    }
+    if (empty($cssFile)) {
+        $cssFile = "default.css";
     }
 
     $html .= '<style>';
-    $html .= file_get_contents("default.css");
+    $html .= file_get_contents($cssFile);
     $html .= '</style>';
     $html .= '</head><body>';
     $html .= '<div id="progress"></div>';
