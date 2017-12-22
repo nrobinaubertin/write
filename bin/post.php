@@ -37,19 +37,19 @@ function searchFile($file, $dir, $root_path)
 
 function locateFile($file, $dir, $root_path, $formats = [])
 {
-    // if the extension is given, serve this format only
-    $location = searchFile($file, $dir, $root_path);
-    if (file_exists($location)) {
-        return $location;
-    } else {
-        return "";
-    }
-
-    // if the extension is not given, try different formats
-    foreach ($formats as $ext) {
-        $location = searchFile($file.'.'.$ext, $dir, $root_path);
+    if (count($formats) === 0) {
+        $location = searchFile($file, $dir, $root_path);
         if (file_exists($location)) {
             return $location;
+        } else {
+            return "";
+        }
+    } else {
+        foreach ($formats as $ext) {
+            $location = searchFile($file.'.'.$ext, $dir, $root_path);
+            if (file_exists($location)) {
+                return $location;
+            }
         }
     }
 

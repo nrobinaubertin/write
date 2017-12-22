@@ -45,22 +45,6 @@ main {
     background-color: #fdfdfd;
 }
 
-header {
-    padding: 1rem;
-    position: sticky;
-    top: 0;
-}
-
-header a {
-    font-size: 1.3rem;
-    text-decoration: none;
-    color: #444;
-}
-
-header a:hover {
-    color: #000;
-}
-
 .cover ~ main > article {
     position: relative;
     top: -5rem;
