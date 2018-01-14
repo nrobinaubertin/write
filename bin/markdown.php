@@ -5,15 +5,16 @@ use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\DocParser;
 use League\CommonMark\ElementRendererInterface;
 use League\CommonMark\Environment;
-use League\CommonMark\HtmlRenderer;
 use League\CommonMark\HtmlElement;
+use League\CommonMark\HtmlRenderer;
 use League\CommonMark\InlineParserContext;
-use League\CommonMark\Inline\Element\Link;
-use League\CommonMark\Inline\Element\Image;
 use League\CommonMark\Inline\Element\AbstractInline;
+use League\CommonMark\Inline\Element\Image;
+use League\CommonMark\Inline\Element\Link;
 use League\CommonMark\Inline\Parser\AbstractInlineParser;
 use League\CommonMark\Inline\Parser\InlineParserInterface;
 use League\CommonMark\Inline\Renderer\InlineRendererInterface;
+use League\CommonMark\Util\Xml;
 
 class PictureRenderer implements InlineRendererInterface
 {
@@ -77,10 +78,10 @@ class ExternalLinkRenderer implements InlineRendererInterface
 
         $attrs = array();
 
-        $attrs['href'] = $htmlRenderer->escape($inline->getUrl(), true);
+        $attrs['href'] = Xml::escape($inline->getUrl(), true);
 
         if (isset($inline->attributes['title'])) {
-            $attrs['title'] = $htmlRenderer->escape($inline->data['title'], true);
+            $attrs['title'] = Xml::escape($inline->data['title'], true);
         }
 
         if ($this->isExternalUrl($inline->getUrl())) {
