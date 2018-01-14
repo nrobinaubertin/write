@@ -96,10 +96,6 @@ h1 {
     line-height: 3rem;
 }
 
-h1, h2, h3, h4 {
-    padding-top: 2.3rem;
-}
-
 small {
     font-size: 0.8rem;
     color: #777;
@@ -154,4 +150,33 @@ pre code {
     p {
         text-align: justify;
     }
+}
+
+.credit-badge {
+    background: white;
+    color: black;
+    border: 1px solid;
+    padding: 4px 6px;
+    font-size: 12px;
+    line-height: 1.2;
+    display: inline-block;
+    border-radius: 3px;
+    transition: .3s;
+    margin: 1rem;
+    z-index: 200;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.credit-badge span {
+    display: inline-block;
+    padding: 2px 3px;
+}
+.credit-badge svg {
+    height: 12px;
+    width: auto;
+    position: relative;
+    vertical-align: middle;
+    top: -1px;
+    fill: black;
 }

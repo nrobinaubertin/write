@@ -56,8 +56,9 @@ function locateFile($file, $dir, $root_path, $formats = [])
     return "";
 }
 
-function genCoverImageHTML($src, $root_path, $dir, $root_url)
+function genCoverImageHTML($root_path, $dir, $root_url, $metadata)
 {
+    $src = $metadata["cover-image"];
     if (!$src) {
         return "";
     }
@@ -83,7 +84,17 @@ function genCoverImageHTML($src, $root_path, $dir, $root_url)
 
     $coverPicture .= '<img onerror="document.body.removeChild(document.body.firstChild)" onload="this.style.opacity=1" src="'.$coverImg_url.'">';
     $coverPicture .= '</picture>';
+
+    // cover credits
+    if ($metadata["cover-credit-url"] && $metadata["cover-credit-title"]) {
+        $coverPicture .= '<a class="credit-badge" href="'.$metadata["cover-credit-url"].'" target="_blank" rel="noopener noreferrer">';
+        $coverPicture .= '<span><svg viewBox="0 0 32 32">';
+        $coverPicture .= '<path d="M20.8 18.1c0 2.7-2.2 4.8-4.8 4.8s-4.8-2.1-4.8-4.8c0-2.7 2.2-4.8 4.8-4.8 2.7.1 4.8 2.2 4.8 4.8zm11.2-7.4v14.9c0 2.3-1.9 4.3-4.3 4.3h-23.4c-2.4 0-4.3-1.9-4.3-4.3v-15c0-2.3 1.9-4.3 4.3-4.3h3.7l.8-2.3c.4-1.1 1.7-2 2.9-2h8.6c1.2 0 2.5.9 2.9 2l.8 2.4h3.7c2.4 0 4.3 1.9 4.3 4.3zm-8.6 7.5c0-4.1-3.3-7.5-7.5-7.5-4.1 0-7.5 3.4-7.5 7.5s3.3 7.5 7.5 7.5c4.2-.1 7.5-3.4 7.5-7.5z"></path>';
+        $coverPicture .= '</svg></span><span>'.$metadata["cover-credit-title"].'</span></a>';
+    }
+
     $coverPicture .= '</div>';
+
     // We add a bit of js to ensure a proper height for the cover
     // (vh is not an option due to this issue : http://stackoverflow.com/questions/24944925/background-image-jumps-when-address-bar-hides-ios-android-mobile-chrome)
     $coverPicture .= '
@@ -115,7 +126,7 @@ function genMeta($metadata, $dir, $root_path, $root_url)
     if (!empty($metadata["description"])) {
         $html .= '<meta property="og:description" content="'.$metadata["description"].'">';
     }
-    
+
     if (!empty($metadata["cover-image"])) {
         //$html .= '<meta property="og:image" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$root_url.$dir.$metadata["cover-image"].'">';
         $html .= '<meta property="og:image" content="'.$_SERVER['HTTP_X_FORWARDED_PROTO'].':'.$root_url.'_gd?url='.urlencode($dir.$metadata["cover-image"]).'&w=1024&h=768">';
@@ -147,7 +158,7 @@ function genPostHTML($dir, $root_path, $root_url)
 
     $coverPictureHTML = "";
     if (isset($metadata['cover-image'])) {
-        $coverPictureHTML = genCoverImageHTML($metadata['cover-image'], $root_path, $dir, $root_url);
+        $coverPictureHTML = genCoverImageHTML($root_path, $dir, $root_url, $metadata);
     }
 
     $html = "";
@@ -160,12 +171,12 @@ function genPostHTML($dir, $root_path, $root_url)
         $font = locateFile($metadata['title-font'], $dir, $root_path, $fontFormats);
         $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.$root_url.$font.'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
-    
+
     if (isset($metadata['text-font'])) {
         $font = locateFile($metadata['text-font'], $dir, $root_path, $fontFormats);
         $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.$root_url.$font.'");} body{font-family: "TextFont", sans-serif;}</style>';
     }
-    
+
     if (isset($metadata['style-file'])) {
         $cssFile = locateFile($metadata['style-file'], $dir, $root_path);
     }
