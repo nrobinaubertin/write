@@ -136,10 +136,14 @@ function genMeta($metadata, $dir, $root_path, $root_url)
 
 function genPostHTML($dir, $root_path, $root_url)
 {
-    foreach (scandir($dir) as $file) {
-        if (pathinfo($file, PATHINFO_EXTENSION) == "md") {
-            $path = $dir.$file;
-            break;
+    if (file_exists($dir."index.md")) {
+        $path = $dir."index.md";
+    } else {
+        foreach (scandir($dir) as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) == "md") {
+                $path = $dir.$file;
+                break;
+            }
         }
     }
     if(!isset($path)) {
@@ -201,7 +205,7 @@ function genPostHTML($dir, $root_path, $root_url)
     $html .= '</article></main>';
     $html .= '</body>';
     $html .= '</html>';
-    
+
     $filename = sys_get_temp_dir()."/".sha1($html);
     file_put_contents($filename, $html);
 
