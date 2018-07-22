@@ -35,6 +35,7 @@ class PictureRenderer implements InlineRendererInterface
     {
         $attrs = array();
 
+        $innerHTML = "";
         if ($inline->getUrl()) {
             $src = $inline->getUrl();
             $original = $src;
@@ -42,7 +43,6 @@ class PictureRenderer implements InlineRendererInterface
                 $src = $this->dir.$src;
                 $original = $this->root_path."/".$src;
             }
-            $innerHTML = "";
             for ($i = 0; $i < 20; $i++) {
                 $screenWidth = 100 + 100 * $i;
                 $size = min(800, $screenWidth);
