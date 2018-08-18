@@ -1,5 +1,5 @@
 {
     "require": {
-        "league/commonmark": "~0.16"
+        "league/commonmark": "~0.17"
     }
 }
