@@ -2,6 +2,15 @@ body {
     margin: 0px;
 }
 
+mark {
+    background: #F1C40F;
+    display: inline-block;
+    font-weight: bold;
+    padding: 0px 6px 1px 6px;
+    border-radius: 1px;
+    margin-bottom: -1px;
+}
+
 .cover {
     overflow: hidden;
     width: 100%;
