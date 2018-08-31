@@ -99,10 +99,6 @@ function locateFile(string $file, string $dir, array $formats = []): string
 function genCoverImageHTML(array $metadata): string
 {
     $src = $metadata["cover-image"];
-    if (!$src) {
-        return "";
-    }
-
     $coverPicture = "";
     $coverPicture .= '<div class="cover"><div class="cover-img" style="background-image:url('.$src.')"></div>';
 
@@ -115,17 +111,6 @@ function genCoverImageHTML(array $metadata): string
     }
 
     $coverPicture .= '</div>';
-
-    // We add a bit of js to ensure a proper height for the cover
-    // (vh is not an option due to this issue : http://stackoverflow.com/questions/24944925/background-image-jumps-when-address-bar-hides-ios-android-mobile-chrome)
-    $coverPicture .= '
-    <script>
-        document.querySelectorAll(".cover").forEach(
-            e => e.style.height = Math.floor(window.innerHeight * .70) + "px"
-        );
-    </script>
-    ';
-
     return $coverPicture;
 }
 
@@ -137,7 +122,7 @@ function genMeta(array $metadata): string
     $html .= '<meta property="og:type" content="article">';
 
     if (!empty($metadata["title"])) {
-        $html .= '<title>'.$metadata['title'].'</title>';
+        $html .= '<title>'.$metadata["title"].'</title>';
         $html .= '<meta property="og:title" content="'.$metadata["title"].'">';
     }
 
@@ -163,48 +148,46 @@ function genPostHTML(string $target): string
     $metadata = getMetadata($markdown);
 
     $coverPictureHTML = "";
-    if (isset($metadata['cover-image'])) {
+    if (isset($metadata["cover-image"])) {
         $coverPictureHTML = genCoverImageHTML($metadata);
     }
 
     $html = "";
-    $html .= '<!DOCTYPE html><html><head>';
+    $html .= "<!DOCTYPE html><html><head>";
     $html .= genMeta($metadata);
 
     $fontFormats = ["woff2", "woff", "ttf", "otf"];
 
-    if (isset($metadata['title-font'])) {
-        $font = locateFile($metadata['title-font'], $dir, $fontFormats);
+    if (isset($metadata["title-font"])) {
+        $font = locateFile($metadata["title-font"], $dir, $fontFormats);
         $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.getRelativePath($dir, $font).'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
 
-    if (isset($metadata['text-font'])) {
+    if (isset($metadata["text-font"])) {
         $font = locateFile($metadata['text-font'], $dir, $fontFormats);
         $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.getRelativePath($dir, $font).'");} body{font-family: "TextFont", sans-serif;}</style>';
     }
 
-    if (isset($metadata['style-file'])) {
-        $cssFile = locateFile($metadata['style-file'], $dir);
+    if (isset($metadata["style-file"])) {
+        $cssFile = locateFile($metadata["style-file"], $dir);
     } else {
         $cssFile = locateFile("default.css", $dir);
     }
 
     $html .= '<link rel="stylesheet" href="'.getRelativePath($dir, $cssFile).'"/>';
     $html .= '</head><body>';
-    // add progress bar
-    $html .= '<div id="progress"></div>';
-    $html .= '<script>
-    document.addEventListener("scroll", function() {
-        document.getElementById("progress").style.width = window.scrollY/(document.body.scrollHeight - window.innerHeight)*100 + "%";
-    });
-    </script>';
     $html .= $coverPictureHTML;
     $html .= '<main><article>';
     $html .= parseStaticMarkDown($markdown);
     $html .= '</article></main>';
-    $html .= '</body>';
-    $html .= '</html>';
 
+    if (isset($metadata["script-file"])) {
+        $scriptFile = locateFile($metadata["script-file"], $dir);
+    } else {
+        $scriptFile = locateFile("default.js", $dir);
+    }
+    $html .= '<script src="'.getRelativePath($dir, $scriptFile).'"></script>';
+    $html .= '</body></html>';
     return $html;
 }
 
