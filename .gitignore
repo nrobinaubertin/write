@@ -4,3 +4,5 @@ posts/
 bin/composer
 *.orig
 /posts
+/docker
+/dist

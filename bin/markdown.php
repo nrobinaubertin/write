@@ -121,3 +121,25 @@ function parseMarkDown($markdown, $root_path, $dir)
     $document = $parser->parse($markdown);
     return $htmlRenderer->renderBlock($document);
 }
+
+function parseStaticMarkDown($markdown)
+{
+    $config = [
+        'renderer' => [
+            'block_separator' => "\n",
+            'inner_separator' => "\n",
+            'soft_break'      => "\n",
+        ],
+        'enable_em' => true,
+        'enable_strong' => true,
+        'use_asterisk' => true,
+        'use_underscore' => true,
+    ];
+
+    $environment = Environment::createCommonMarkEnvironment();
+    $environment->setConfig($config);
+    $parser = new DocParser($environment);
+    $htmlRenderer = new HtmlRenderer($environment);
+    $document = $parser->parse($markdown);
+    return $htmlRenderer->renderBlock($document);
+}

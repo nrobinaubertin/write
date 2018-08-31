@@ -15,7 +15,6 @@ if ($EXPECTED_SIGNATURE !== $ACTUAL_SIGNATURE) {
     unlink("composer-setup.php");
     exit;
 }
-
 $RESULT = intval(shell_exec('php composer-setup.php --quiet --install-dir=bin --filename=composer; echo $?'));
 echo "$RESULT\n";
 unlink("composer-setup.php");
