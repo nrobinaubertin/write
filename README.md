@@ -17,28 +17,7 @@ To install the project:
 ```
 php install.php
 ```
-
-Example nginx configuration:
+To compile the markdown files:
 ```
-location /write {
-    try_files $uri /write/index.php$is_args$args;
-
-    location ~ index\.php(/|$) {
-        fastcgi_pass unix:/run/php-fpm/php-fpm.sock;
-        fastcgi_split_path_info ^(.+\.php)(/.*)$;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        fastcgi_param DOCUMENT_ROOT $realpath_root;
-    }
-}
-```
-
-Docker is a good way to get up and running in no time, just use my dockerfile [nginx-php](https://github.com/nrobinaubertin/dockerfiles/tree/master/nginx-php).  
-Build it with the command:
-```
-docker build -t write --build-arg PHP_EXT="php7-json php7-gd php7-mbstring php7-openssl"
-```
-And run it like this:
-```
-docker run -d -p 80:8080 -v $(pwd)/example.nginx.conf:/etc/nginx/nginx.conf -v $(pwd):/www --name write write
+php bin/compile.php
 ```

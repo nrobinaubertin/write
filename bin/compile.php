@@ -1,6 +1,9 @@
 <?php
 
-require_once __DIR__ . "/markdown.php";
+require_once __DIR__ . '/../vendor/autoload.php';
+use League\CommonMark\DocParser;
+use League\CommonMark\Environment;
+use League\CommonMark\HtmlRenderer;
 
 function compilePosts($target)
 {
@@ -203,6 +206,28 @@ function genPostHTML(string $target): string
     $html .= '</html>';
 
     return $html;
+}
+
+function parseStaticMarkDown($markdown)
+{
+    $config = [
+        'renderer' => [
+            'block_separator' => "\n",
+            'inner_separator' => "\n",
+            'soft_break'      => "\n",
+        ],
+        'enable_em' => true,
+        'enable_strong' => true,
+        'use_asterisk' => true,
+        'use_underscore' => true,
+    ];
+
+    $environment = Environment::createCommonMarkEnvironment();
+    $environment->setConfig($config);
+    $parser = new DocParser($environment);
+    $htmlRenderer = new HtmlRenderer($environment);
+    $document = $parser->parse($markdown);
+    return $htmlRenderer->renderBlock($document);
 }
 
 compilePosts("/");
