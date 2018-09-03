@@ -63,6 +63,7 @@ function getRelativePath(string $fileDir, string $targetPath): string
     $relativePath = ltrim(str_replace($targetDir, "", $fileDir), "/");
     $relativePath = preg_replace("/[\w-]+/","..", $relativePath);
     $relativePath = rtrim($relativePath, "/") . "/";
+    $relativePath = ltrim($relativePath, "/");
     $relativePath .= basename($targetPath);
     return $relativePath;
 }
