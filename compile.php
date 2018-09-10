@@ -1,30 +1,31 @@
+#!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use League\CommonMark\HtmlRenderer;
 
-function compilePosts($target)
+function compilePosts($target, $rootDir, $dist)
 {
-    $postDir = realpath(__DIR__ . "/../posts/");
+    $postDir = realpath($rootDir);
     if (!$postDir) {
         exit(1);
     }
-    $distDir = realpath(__DIR__ . "/../dist/");
+    $distDir = realpath($dist);
     if (!$distDir) {
-        mkdir(__DIR__ . "/../dist/");
+        mkdir($dist);
     }
-    $distDir = realpath(__DIR__ . "/../dist/");
+    $distDir = realpath($dist);
     foreach(scandir($postDir.$target) as $f) {
         if ($f === "." || $f === "..") {
             continue;
         }
         if (is_dir($postDir.$target."/".$f)) {
-            if (!file_exists(__DIR__ . "/../dist/".$target."/".$f)) {
-                mkdir(__DIR__ . "/../dist/".$target."/".$f);
+            if (!file_exists($distDir.$target."/".$f)) {
+                mkdir($distDir.$target."/".$f);
             }
-            compilePosts($target."/".$f);
+            compilePosts($target."/".$f, $rootDir, $distDir);
             continue;
         }
         switch(pathinfo($f, PATHINFO_EXTENSION)) {
@@ -214,4 +215,4 @@ function parseStaticMarkDown($markdown)
     return $htmlRenderer->renderBlock($document);
 }
 
-compilePosts("/");
+compilePosts("/", $argv[1], $argv[2]);
