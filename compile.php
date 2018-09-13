@@ -76,9 +76,8 @@ function searchFile(string $file, string $dir): string
     }
     if (file_exists($dir.$file)) {
         return $dir.$file;
-    } else {
-        return "";
     }
+    return "";
 }
 
 function locateFile(string $file, string $dir, array $formats = []): string
@@ -87,51 +86,40 @@ function locateFile(string $file, string $dir, array $formats = []): string
     if (count($formats) === 0) {
         return searchFile($file, $dir);
     }
-
     foreach ($formats as $ext) {
         $location = searchFile($file.".".$ext, $dir);
         if ($location != "") {
             return $location;
         }
     }
-
     return "";
 }
 
 function genCoverImageHTML(array $metadata): string
 {
-    $src = $metadata["cover-image"];
-    $coverPicture = "";
-    $coverPicture .= '<div class="cover"><div class="cover-img" style="background-image:url('.$src.')"></div>';
-
-    // cover credits
+    $coverPicture = '<div class="cover"><div class="cover-img" style="background-image:url('.$metadata["cover-image"].')"></div>';
     if (isset($metadata["cover-credit-url"]) && isset($metadata["cover-credit-title"])) {
         $coverPicture .= '<a class="credit-badge" href="'.$metadata["cover-credit-url"].'" target="_blank" rel="noopener noreferrer">';
         $coverPicture .= '<span><svg viewBox="0 0 32 32">';
         $coverPicture .= '<path d="M20.8 18.1c0 2.7-2.2 4.8-4.8 4.8s-4.8-2.1-4.8-4.8c0-2.7 2.2-4.8 4.8-4.8 2.7.1 4.8 2.2 4.8 4.8zm11.2-7.4v14.9c0 2.3-1.9 4.3-4.3 4.3h-23.4c-2.4 0-4.3-1.9-4.3-4.3v-15c0-2.3 1.9-4.3 4.3-4.3h3.7l.8-2.3c.4-1.1 1.7-2 2.9-2h8.6c1.2 0 2.5.9 2.9 2l.8 2.4h3.7c2.4 0 4.3 1.9 4.3 4.3zm-8.6 7.5c0-4.1-3.3-7.5-7.5-7.5-4.1 0-7.5 3.4-7.5 7.5s3.3 7.5 7.5 7.5c4.2-.1 7.5-3.4 7.5-7.5z"></path>';
         $coverPicture .= '</svg></span><span>'.$metadata["cover-credit-title"].'</span></a>';
     }
-
     $coverPicture .= '</div>';
     return $coverPicture;
 }
 
 function genMeta(array $metadata): string
 {
-    $html = "";
-    $html .= '<meta charset="utf8">';
+    $html = '<meta charset="utf8">';
     $html .= '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">';
     $html .= '<meta property="og:type" content="article">';
-
     if (!empty($metadata["title"])) {
         $html .= '<title>'.$metadata["title"].'</title>';
         $html .= '<meta property="og:title" content="'.$metadata["title"].'">';
     }
-
     if (!empty($metadata["description"])) {
         $html .= '<meta property="og:description" content="'.$metadata["description"].'">';
     }
-
     if (!empty($metadata["cover-image"])) {
         $html .= '<meta property="og:image" content="'.$metadata["cover-image"].'">';
     }
@@ -145,28 +133,19 @@ function genPostHTML(string $target): string
         return "";
     }
     $dir = dirname($path);
-
     $markdown = file_get_contents($path);
     $metadata = getMetadata($markdown);
 
-    $coverPictureHTML = "";
-    if (isset($metadata["cover-image"])) {
-        $coverPictureHTML = genCoverImageHTML($metadata);
-    }
-
-    $html = "";
-    $html .= "<!DOCTYPE html><html><head>";
+    $html = "<!DOCTYPE html><html><head>";
     $html .= genMeta($metadata);
 
-    $fontFormats = ["woff2", "woff", "ttf", "otf"];
-
     if (isset($metadata["title-font"])) {
-        $font = locateFile($metadata["title-font"], $dir, $fontFormats);
+        $font = locateFile($metadata["title-font"], $dir, ["woff2", "woff", "ttf", "otf"]);
         $html .= '<style>@font-face{font-family:"TitleFont";src:'.'url("'.getRelativePath($dir, $font).'");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>';
     }
 
     if (isset($metadata["text-font"])) {
-        $font = locateFile($metadata['text-font'], $dir, $fontFormats);
+        $font = locateFile($metadata['text-font'], $dir, ["woff2", "woff", "ttf", "otf"]);
         $html .= '<style>@font-face{font-family:"TextFont";src:'.'url("'.getRelativePath($dir, $font).'");} body{font-family: "TextFont", sans-serif;}</style>';
     }
 
@@ -178,7 +157,9 @@ function genPostHTML(string $target): string
 
     $html .= '<link rel="stylesheet" href="'.getRelativePath($dir, $cssFile).'"/>';
     $html .= '</head><body>';
-    $html .= $coverPictureHTML;
+    if (isset($metadata["cover-image"])) {
+        $html .= genCoverImageHTML($metadata);
+    }
     $html .= '<main><article>';
     $html .= parseStaticMarkDown($markdown);
     $html .= '</article></main>';
