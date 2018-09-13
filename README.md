@@ -1,23 +1,26 @@
-Each of your posts should be a markdown file with his assets in its own directory.  
-All the post directories should go in a posts/ directory at the root of the repo.
-You should create a homepage in the same way you create a post : by writing a markdown file. However, the homepage mardown file must live at the root of the posts/ directory.
+Write
+=====
+*Static blog generator in less than 200 LOC*
 
+Each article of your blog is a markdown file.  
 The are some options that can be specified by placing html comments in your markdown file like this:
 ```
 <!-- key: value -->
 ```
 The options are:
-- cover-image : specify a relative path to an image that should be used as cover.
 - title : specify a title for your post
 - description : specify a description (useful for social media sharing)
-- title-font : specify a relative path to a font that will be used on your titles
-- text-font : specify a relative path to a font that will be used on your text
+- title-font : path or name of a font file that will be used on your titles
+- text-font : path or name of a font file that will be used on your text
+- cover-image : specify a relative path to an image that should be used as cover.
+- cover-credit-title: give credit for the cover-image
+- cover-credit-url: credit url for the cover-image
 
 To install the project:
 ```
-php install.php
+./install.php
 ```
 To compile the markdown files:
 ```
-php bin/compile.php
+./compile.php <target> <dist>
 ```
