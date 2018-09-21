@@ -2,7 +2,18 @@ Write
 =====
 *Static blog generator in less than 200 LOC*
 
-Each article of your blog is a markdown file.  
+![Write](write.jpg)
+
+### What is Write ?
+Write is a static blog generator in python. Like a pen, it's a simple but powerful tool that does what you want, nothing more.  
+
+### Requirements
+- Python 3+
+- [Misletoe](https://github.com/miyuchina/mistletoe)
+
+### How does it work ?
+
+Each article of your blog is a [commonmark](https://commonmark.org/) markdown file.  
 The are some options that can be specified by placing html comments in your markdown file like this:
 ```
 <!-- key: value -->
@@ -16,11 +27,8 @@ The options are:
 - cover-credit-title: give credit for the cover-image
 - cover-credit-url: credit url for the cover-image
 
-To install the project:
+In order to process your files, just point the script towards your blog directory and specify an output directory :
 ```
-./install.php
+write.py blog/ dist/
 ```
-To compile the markdown files:
-```
-./compile.php <target> <dist>
-```
+That's it !
