@@ -1,26 +1,44 @@
 #!/usr/bin/env python
 
-import os
-import sys
-import mistletoe
-import re
+import os, sys, mistletoe, re, shutil
+
+def compilePosts(targetDir, rootDir, distDir):
+    rootDir = os.path.abspath(rootDir)
+    if not os.path.isdir(rootDir):
+        sys.exit(rootDir + " is not an existing directory.")
+    if not os.path.isdir(distDir):
+        os.mkdir(distDir)
+    for filename in os.listdir(rootDir + os.sep + targetDir):
+        target = os.path.abspath(rootDir + os.sep + targetDir + os.sep + filename)
+        if os.path.isdir(target):
+            compilePosts(targetDir + os.sep + filename, rootDir, distDir + os.sep + filename)
+            continue
+        basename, ext = os.path.splitext(filename)
+        if ext == ".md":
+            with open(distDir + os.sep + basename + ".html", "w") as distFile:
+                distFile.write(genPostHTML(target))
+        else:
+            shutil.copyfile(target, distDir + os.sep + filename)
 
 def parseStaticMarkdown(filename):
     return mistletoe.markdown(open(filename, "r"))
 
 def locateFile(filename, target_dir):
-    print(filename)
+    target_dir = os.path.abspath(target_dir)
     while (os.path.isdir(target_dir) and not os.path.isfile(os.path.join(target_dir, filename))):
         target_dir = os.path.dirname(target_dir)
-        print(target_dir)
         if target_dir == "/":
             return ""
-    return os.path.join(target_dir, filename)
+    p = os.path.abspath(os.path.join(target_dir, filename))
+    return p
 
 def getRelativePath(path1, path2):
+    path1 = os.path.abspath(path1)
+    path2 = os.path.abspath(path2)
     c = len(os.path.commonpath([path1, path2]).split(os.sep))
-    ll = [".." * (len(path1.split(os.sep)) - c - 1)]
-    return "/".join(ll + list(path2.split(os.sep)[c:]))
+    ll = [".." * (len(path1.split(os.sep)) - c)]
+    p = "/".join(ll + list(path2.split(os.sep)[c:])).strip("/")
+    return p
 
 def getMetadata(file):
     metadata = {}
@@ -96,4 +114,4 @@ def genPostHTML(target):
     html += '</body></html>'
     return html;
 
-print(genPostHTML(sys.argv[1]))
+compilePosts("", sys.argv[1], sys.argv[2])
