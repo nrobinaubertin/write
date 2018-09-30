@@ -42,7 +42,7 @@ def getRelativePath(path1, path2):
     path1 = os.path.abspath(path1)
     path2 = os.path.abspath(path2)
     c = len(os.path.commonpath([path1, path2]).split(os.sep))
-    ll = [".." * (len(path1.split(os.sep)) - c)]
+    ll = [".."] * (len(path1.split(os.sep)) - c)
     return "/".join(ll + list(path2.split(os.sep)[c:])).strip("/")
 
 
