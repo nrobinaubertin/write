@@ -60,27 +60,6 @@ def getMetadata(file):
     return metadata
 
 
-def genCoverImageHTML(metadata):
-    cover_picture = (
-        '<div class="cover"><div class="cover-img" style="background-image:url('
-        + metadata["cover-image"]
-        + ')"></div>'
-    )
-    if "cover-credit-url" in metadata and "cover-credit-title" in metadata:
-        cover_picture += (
-            '<a class="credit-badge" href="'
-            + metadata["cover-credit-url"]
-            + '" target="_blank" rel="noopener noreferrer">'
-        )
-        cover_picture += '<span><svg viewBox="0 0 32 32">'
-        cover_picture += '<path d="M20.8 18.1c0 2.7-2.2 4.8-4.8 4.8s-4.8-2.1-4.8-4.8c0-2.7 2.2-4.8 4.8-4.8 2.7.1 4.8 2.2 4.8 4.8zm11.2-7.4v14.9c0 2.3-1.9 4.3-4.3 4.3h-23.4c-2.4 0-4.3-1.9-4.3-4.3v-15c0-2.3 1.9-4.3 4.3-4.3h3.7l.8-2.3c.4-1.1 1.7-2 2.9-2h8.6c1.2 0 2.5.9 2.9 2l.8 2.4h3.7c2.4 0 4.3 1.9 4.3 4.3zm-8.6 7.5c0-4.1-3.3-7.5-7.5-7.5-4.1 0-7.5 3.4-7.5 7.5s3.3 7.5 7.5 7.5c4.2-.1 7.5-3.4 7.5-7.5z"></path>'
-        cover_picture += (
-            "</svg></span><span>" + metadata["cover-credit-title"] + "</span></a>"
-        )
-    cover_picture += "</div>"
-    return cover_picture
-
-
 def genPostHTML(target):
     path = os.path.abspath(target)
     if not os.path.exists(path):
@@ -88,59 +67,32 @@ def genPostHTML(target):
     target_dir = os.path.dirname(path)
     metadata = getMetadata(path)
 
-    html = "<!DOCTYPE html><html><head>"
-    html = '<meta charset="utf8">'
-    html += '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
-    html += '<meta property="og:type" content="article">'
+    lang = "en"
+    if "lang" in metadata:
+        lang = metadata["lang"]
+
+    html = """
+        <!DOCTYPE html><html lang="{}"><head>
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+    """.format(lang)
+
     if "title" in metadata:
-        html += "<title>" + metadata["title"] + "</title>"
-        html += '<meta property="og:title" content="' + metadata["title"] + '">'
-    if "description" in metadata:
-        html += (
-            '<meta property="og:description" content="' + metadata["description"] + '">'
-        )
-    if "cover-image" in metadata:
-        html += '<meta property="og:image" content="' + metadata["cover-image"] + '">'
+        html += '<title>{}</title>'.format(metadata["title"])
 
-    if "title-font" in metadata:
-        font = locateFile(metadata["title-font"], target_dir)
-        html += (
-            '<style>@font-face{font-family:"TitleFont";src:url("'
-            + getRelativePath(target_dir, font)
-            + '");} h1,h2,h3,h4,h5,h6{font-family: "TitleFont", serif;}</style>'
-        )
-
-    if "text-font" in metadata:
-        font = locateFile(metadata["text-font"], target_dir)
-        html += (
-            '<style>@font-face{font-family:"TextFont";src:url("'
-            + getRelativePath(target_dir, font)
-            + '");} body{font-family: "TextFont", sans-serif;}</style>'
-        )
-
+    css_file = locateFile("default.css", target_dir)
     if "style-file" in metadata:
         css_file = locateFile(metadata["style-file"], target_dir)
-    else:
-        css_file = locateFile("default.css", target_dir)
-    html += (
-        '<link rel="stylesheet" href="' + getRelativePath(target_dir, css_file) + '"/>'
-    )
 
-    html += "</head><body>"
+    html += """
+        <link rel='stylesheet' href='{}'/></head><body><main><article>{}</article></main>
+    """.format(getRelativePath(target_dir, css_file), mistletoe.markdown(open(path, "r")))
 
-    if "cover-image" in metadata:
-        html += genCoverImageHTML(metadata)
-    html += "<main><article>"
-    html += mistletoe.markdown(open(path, "r"))
-    html += "</article></main>"
-
+    script_file = locateFile("default.js", target_dir)
     if "script-file" in metadata:
         script_file = locateFile(metadata["script-file"], target_dir)
-    else:
-        script_file = locateFile("default.js", target_dir)
-    html += '<script src="' + getRelativePath(target_dir, script_file) + '"></script>'
 
-    html += "</body></html>"
+    html += "<script src='{}'></script></body></html>".format(getRelativePath(target_dir, script_file));
     return html
 
 

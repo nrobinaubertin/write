@@ -1,6 +1,6 @@
 Write
 =====
-*Static blog generator in less than 200 LOC*
+*Static blog generator in less than 100 LOC*
 
 ![Write](write.jpg)
 
@@ -19,13 +19,12 @@ The are some options that can be specified by placing html comments in your mark
 <!-- key: value -->
 ```
 The options are:
-- title : specify a title for your post
-- description : specify a description (useful for social media sharing)
-- title-font : path or name of a font file that will be used on your titles
-- text-font : path or name of a font file that will be used on your text
-- cover-image : specify a relative path to an image that should be used as cover.
-- cover-credit-title: give credit for the cover-image
-- cover-credit-url: credit url for the cover-image
+- title: specify a title for your post
+- lang: specify a lang for your post
+- title-font: path or name of a font file that will be used on your titles
+- text-font: path or name of a font file that will be used on your text
+- style-file: path or name of a css file that will be used on the html
+- script-file: path or name of a js file that will be used on the html
 
 In order to process your files, just point the script towards your blog directory and specify an output directory :
 ```
