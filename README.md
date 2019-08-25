@@ -23,8 +23,8 @@ The options are:
 - lang: specify a lang for your post
 - title-font: path or name of a font file that will be used on your titles
 - text-font: path or name of a font file that will be used on your text
-- style-file: path or name of a css file that will be used on the html
-- script-file: path or name of a js file that will be used on the html
+- style-file: path or name of a css file that will be used on the html (defaults to `default.css`)
+- script-file: path or name of a js file that will be used on the html (defaults to `default.js`)
 
 In order to process your files, just point the script towards your blog directory and specify an output directory :
 ```

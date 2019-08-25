@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import os, sys, mistletoe, re, shutil
-
+import os, sys, mistletoe, re, shutil, yaml
+from feedgen.feed import FeedGenerator
 
 def compilePosts(target_dir, rootDir, dist_dir):
     rootDir = os.path.abspath(rootDir)
@@ -9,8 +9,8 @@ def compilePosts(target_dir, rootDir, dist_dir):
         sys.exit(rootDir + " is not an existing directory.")
     if not os.path.isdir(dist_dir):
         os.mkdir(dist_dir)
-    for filename in os.listdir(rootDir + os.sep + target_dir):
-        if os.path.isdir(rootDir + os.sep + target_dir + os.sep + filename):
+    for filename in os.listdir(rootDir + target_dir):
+        if os.path.isdir(rootDir + target_dir + os.sep + filename):
             compilePosts(
                 target_dir + os.sep + filename, rootDir, dist_dir + os.sep + filename
             )
@@ -19,14 +19,18 @@ def compilePosts(target_dir, rootDir, dist_dir):
         if ext == ".md":
             with open(dist_dir + os.sep + basename + ".html", "w") as dist_file:
                 dist_file.write(
-                    genPostHTML(rootDir + os.sep + target_dir + os.sep + filename)
+                    genPostHTML(rootDir + target_dir + os.sep + filename)
+                )
+        if ext == ".yaml":
+            with open(dist_dir + os.sep + basename + ".xml", "w") as dist_file:
+                dist_file.write(
+                    genFeedXML(rootDir + target_dir + os.sep + filename)
                 )
         else:
             shutil.copyfile(
                 rootDir + os.sep + target_dir + os.sep + filename,
                 dist_dir + os.sep + filename,
             )
-
 
 def locateFile(filename, target_dir):
     while os.path.isdir(target_dir) and not os.path.isfile(
@@ -37,14 +41,12 @@ def locateFile(filename, target_dir):
             return ""
     return os.path.abspath(os.path.join(target_dir, filename))
 
-
 def getRelativePath(path1, path2):
     path1 = os.path.abspath(path1)
     path2 = os.path.abspath(path2)
     c = len(os.path.commonpath([path1, path2]).split(os.sep))
     ll = [".."] * (len(path1.split(os.sep)) - c)
     return "/".join(ll + list(path2.split(os.sep)[c:])).strip("/")
-
 
 def getMetadata(file):
     metadata = {}
@@ -59,11 +61,24 @@ def getMetadata(file):
                 break
     return metadata
 
+def genFeedXML(target):
+    yaml_feed = yaml.safe_load(open(target, "r"));
+
+    fg = FeedGenerator()
+    fg.title(yaml_feed["title"])
+    fg.description(yaml_feed["description"])
+    fg.link(href=yaml_feed["link"])
+
+    for entry in yaml_feed["feed"]:
+        fe = fg.add_entry()
+        fe.title(entry["title"])
+        fe.link(href=entry["link"])
+        fe.description(entry["description"])
+
+    return fg.rss_str(pretty=True).decode("utf-8")
 
 def genPostHTML(target):
     path = os.path.abspath(target)
-    if not os.path.exists(path):
-        return ""
     target_dir = os.path.dirname(path)
     metadata = getMetadata(path)
 
@@ -94,6 +109,5 @@ def genPostHTML(target):
 
     html += "<script src='{}'></script></body></html>".format(getRelativePath(target_dir, script_file));
     return html
-
 
 compilePosts("", sys.argv[1], sys.argv[2])
