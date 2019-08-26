@@ -21,16 +21,17 @@ def compilePosts(target_dir, rootDir, dist_dir):
                 dist_file.write(
                     genPostHTML(rootDir + target_dir + os.sep + filename)
                 )
+            continue
         if ext == ".yaml":
             with open(dist_dir + os.sep + basename + ".xml", "w") as dist_file:
                 dist_file.write(
                     genFeedXML(rootDir + target_dir + os.sep + filename)
                 )
-        else:
-            shutil.copyfile(
-                rootDir + os.sep + target_dir + os.sep + filename,
-                dist_dir + os.sep + filename,
-            )
+            continue
+        shutil.copyfile(
+            rootDir + os.sep + target_dir + os.sep + filename,
+            dist_dir + os.sep + filename,
+        )
 
 def locateFile(filename, target_dir):
     while os.path.isdir(target_dir) and not os.path.isfile(
