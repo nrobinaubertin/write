@@ -22,7 +22,7 @@ def compilePosts(target_dir, rootDir, dist_dir):
                     genPostHTML(rootDir + target_dir + os.sep + filename)
                 )
             continue
-        if ext == ".yaml":
+        if filename == "feed.yaml":
             with open(dist_dir + os.sep + basename + ".xml", "w") as dist_file:
                 dist_file.write(
                     genFeedXML(rootDir + target_dir + os.sep + filename)
