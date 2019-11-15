@@ -107,8 +107,9 @@ def genPostHTML(target):
     script_file = locateFile("default.js", target_dir)
     if "script-file" in metadata:
         script_file = locateFile(metadata["script-file"], target_dir)
+    if os.path.exists(script_file) and os.path.getsize(script_file) > 0:
+        html += "<script src='{}'></script></body></html>".format(getRelativePath(target_dir, script_file));
 
-    html += "<script src='{}'></script></body></html>".format(getRelativePath(target_dir, script_file));
     return html
 
 compilePosts("", sys.argv[1], sys.argv[2])
