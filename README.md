@@ -1,6 +1,6 @@
 Write
 =====
-*Static blog generator in less than 100 LOC*
+*Static blog generator in less than 150 LOC*
 
 ![Write](write.jpg)
 
@@ -28,6 +28,6 @@ The options are:
 
 In order to process your files, just point the script towards your blog directory and specify an output directory :
 ```
-write.py blog/ dist/
+write blog/ dist/
 ```
 That's it !
