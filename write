@@ -16,6 +16,8 @@ def compilePosts(target_dir, rootDir, dist_dir):
     if not os.path.isdir(dist_dir):
         os.mkdir(dist_dir)
     for filename in os.listdir(rootDir + target_dir):
+        if filename.startswith('.'):
+            continue
         if os.path.isdir(rootDir + target_dir + os.sep + filename):
             compilePosts(
                 target_dir + os.sep + filename, rootDir, dist_dir + os.sep + filename
